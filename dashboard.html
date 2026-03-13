@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>DUFAN — Dashboard</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎢</text></svg>"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
+<link href="css/dashboard.css" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+
+<body>
+<canvas id="bg-canvas"></canvas>
+<div class="noise"></div>
+<div class="scanlines"></div>
+
+<!-- LOADING -->
+<div id="loading-screen">
+  <div class="load-logo">🎢 DUFAN</div>
+  <div class="load-bar"><div class="load-fill"></div></div>
+  <div class="load-text">MEMUAT DASHBOARD<span class="load-dot">.</span><span class="load-dot">.</span><span class="load-dot">.</span></div>
+</div>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-brand">
+    <div class="brand-dot"></div>
+    <div class="brand-name">DUFAN</div>
+  </div>
+  <div class="topbar-right">
+    <div class="user-chip">👤 &nbsp;<strong id="chip-name">—</strong></div>
+    <button class="btn-logout" onclick="doLogout()">⏻ &nbsp;KELUAR</button>
+  </div>
+</div>
+
+<!-- APP -->
+<div class="app">
+
+  <!-- GREETING -->
+  <div class="greeting">
+    <div class="greeting-eye">// DASHBOARD PENGUNJUNG · DUFAN ANCOL</div>
+    <div class="greeting-title">HALO, <span class="hi-name" id="g-name">—</span>!</div>
+    <div class="greeting-sub">// SELAMAT DATANG KEMBALI · KELOLA TIKET KUNJUNGANMU</div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-row">
+    <div class="stat-card" style="--stat-clr:var(--cyan)">
+      <div class="stat-icon">🎟️</div>
+      <div class="stat-num" id="s-total">0</div>
+      <div class="stat-lbl">TOTAL TIKET</div>
+    </div>
+    <div class="stat-card" style="--stat-clr:var(--green)">
+      <div class="stat-icon">✅</div>
+      <div class="stat-num" id="s-valid" style="color:var(--green);text-shadow:0 0 16px var(--green)">0</div>
+      <div class="stat-lbl">TIKET VALID</div>
+    </div>
+    <div class="stat-card" style="--stat-clr:var(--gold2)">
+      <div class="stat-icon">⚡</div>
+      <div class="stat-num" id="s-ft" style="color:var(--gold2);text-shadow:0 0 16px var(--gold2)">0</div>
+      <div class="stat-lbl">FAST TRACK</div>
+    </div>
+    <div class="stat-card" style="--stat-clr:#818cf8">
+      <div class="stat-icon">📋</div>
+      <div class="stat-num" id="s-used" style="color:#818cf8;text-shadow:0 0 16px #818cf8">0</div>
+      <div class="stat-lbl">TERPAKAI</div>
+    </div>
+  </div>
+
+  <!-- TIKET SECTION -->
+  <div class="section-hd">
+    <div>
+      <div class="section-title">📋 TIKET SAYA</div>
+      <div class="section-sub">Semua tiket yang kamu miliki</div>
+    </div>
+    <button class="btn-primary" onclick="openBuyModal()">+ BELI TIKET</button>
+  </div>
+
+  <div class="ticket-grid" id="ticket-grid">
+    <div class="empty-state">
+      <div class="empty-icon">🎟️</div>
+      <div class="empty-title">BELUM ADA TIKET</div>
+      <div class="empty-desc">Yuk beli tiket dan rasakan serunya wahana-wahana di Dufan Ancol!</div>
+      <button class="btn-primary" onclick="openBuyModal()">🎡 &nbsp;BELI TIKET SEKARANG</button>
+    </div>
+  </div>
+
+  <!-- PETA WAHANA SECTION -->
+  <div class="map-section">
+    <div class="section-hd">
+      <div>
+        <div class="section-title">🗺️ PETA WAHANA</div>
+        <div class="section-sub">Status antrian realtime seluruh wahana Dufan</div>
+      </div>
+      <button class="map-toggle-btn" id="map-toggle-btn" onclick="toggleMap()">
+        <span id="map-toggle-lbl">TAMPILKAN PETA</span>
+        <span class="arrow">▼</span>
+      </button>
+    </div>
+    <div class="map-iframe-wrap" id="map-iframe-wrap">
+      <iframe id="map-iframe" src="" title="Peta Wahana Dufan"></iframe>
+    </div>
+  </div>
+
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"><span id="t-icon"></span>&nbsp;<span id="t-msg"></span></div>
+
+<!-- ═══ MODAL: BELI TIKET ═══ -->
+<div class="overlay" id="buy-modal" onclick="closeBuyOverlay(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="window.closeBuy()">✕</button>
+    <div class="modal-eye">// PEMBELIAN TIKET</div>
+    <div class="modal-title">Pilih Paket 🎟️</div>
+    <div class="modal-sub">Pilih paket yang sesuai dengan kebutuhanmu</div>
+
+    <div class="pkg-grid">
+      <div class="pkg" id="pkg-SOLO" style="--pkg-ac:#bbe70e" onclick="pickPkg('SOLO')">
+        <div class="pkg-em">🧍</div>
+        <div class="pkg-name">SOLO</div>
+        <div class="pkg-desc">1 orang, antrian reguler</div>
+        <div class="pkg-price">Rp 250.000</div>
+        <div class="pkg-feats">
+          <div class="pkg-feat">1 tiket dewasa</div>
+          <div class="pkg-feat">Akses semua wahana</div>
+        </div>
+      </div>
+      <div class="pkg" id="pkg-SOLO_PRIORITY" style="--pkg-ac:#fbbf24" onclick="pickPkg('SOLO_PRIORITY')">
+        <div class="pkg-em">🧍⚡</div>
+        <div class="pkg-name">SOLO PRIORITY</div>
+        <div class="pkg-desc">1 orang, jalur fast track</div>
+        <div class="pkg-price">Rp 750.000</div>
+        <div class="pkg-feats">
+          <div class="pkg-feat">1 tiket dewasa</div>
+          <div class="pkg-feat">⚡ Fast track semua wahana</div>
+        </div>
+      </div>
+      <div class="pkg" id="pkg-GROUP" style="--pkg-ac:#ec4899" onclick="pickPkg('GROUP')">
+        <div class="pkg-em">👫</div>
+        <div class="pkg-name">GROUP</div>
+        <div class="pkg-desc">2–10 orang, hemat bersama</div>
+        <div class="pkg-price">Rp 220.000 / orang</div>
+        <div class="pkg-feats">
+          <div class="pkg-feat">Min. 2 orang dewasa</div>
+          <div class="pkg-feat">Antrian reguler</div>
+        </div>
+      </div>
+      <div class="pkg" id="pkg-GROUP_PRIORITY" style="--pkg-ac:#f97316" onclick="pickPkg('GROUP_PRIORITY')">
+        <div class="pkg-em">👫⚡</div>
+        <div class="pkg-name">GROUP PRIORITY</div>
+        <div class="pkg-desc">2–10 orang, fast track</div>
+        <div class="pkg-price">Rp 600.000 / orang</div>
+        <div class="pkg-feats">
+          <div class="pkg-feat">Min. 2 orang dewasa</div>
+          <div class="pkg-feat">⚡ Fast track semua wahana</div>
+        </div>
+      </div>
+      <div class="pkg pkg-wide" id="pkg-GROUP_FAMILY" style="--pkg-ac:#38bdf8" onclick="pickPkg('GROUP_FAMILY')">
+        <div class="pkg-em">👨‍👩‍👧</div>
+        <div class="pkg-name">FAMILY</div>
+        <div class="pkg-desc">Paket keluarga, ramah anak — akses wahana anak termasuk</div>
+        <div class="pkg-price">Rp 200.000 / orang</div>
+        <div class="pkg-feats" style="flex-direction:row;gap:16px;flex-wrap:wrap">
+          <div class="pkg-feat">1–4 dewasa</div>
+          <div class="pkg-feat">Anak-anak boleh ikut</div>
+          <div class="pkg-feat">Akses wahana anak</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DETAIL -->
+    <div id="buy-detail" style="display:none">
+      <div class="divider"></div>
+
+      <div class="fblock">
+        <label class="fl">TANGGAL KUNJUNGAN</label>
+        <input class="fi" id="visit-date" type="date"/>
+      </div>
+
+      <div id="adult-wrap" class="fblock" style="display:none">
+        <label class="fl">JUMLAH DEWASA &nbsp;<span id="adult-range" style="color:var(--muted);font-size:9px"></span></label>
+        <div class="counter-row">
+          <button class="c-btn" onclick="changeCount('adult',-1)">−</button>
+          <span class="c-val" id="adult-count">2</span>
+          <button class="c-btn" onclick="changeCount('adult',1)">+</button>
+          <span class="c-lbl">orang dewasa</span>
+        </div>
+      </div>
+
+      <div id="child-wrap" class="fblock" style="display:none">
+        <label class="fl">JUMLAH ANAK</label>
+        <div class="counter-row">
+          <button class="c-btn" onclick="changeCount('child',-1)">−</button>
+          <span class="c-val" id="child-count">1</span>
+          <button class="c-btn" onclick="changeCount('child',1)">+</button>
+          <span class="c-lbl">anak-anak</span>
+        </div>
+      </div>
+
+      <div id="height-wrap" class="fblock" style="display:none">
+        <label class="fl">TINGGI MINIMUM ANAK TERPENDEK (cm)</label>
+        <input class="fi" id="min-height" type="number" min="80" max="200" placeholder="100"/>
+      </div>
+
+      <div class="os">
+        <div class="os-row"><span class="k">Paket</span><span class="v" id="os-pkg">—</span></div>
+        <div class="os-row"><span class="k">Jumlah Tiket</span><span class="v" id="os-qty">—</span></div>
+        <div class="os-row"><span class="k">Fast Track</span><span class="v" id="os-ft">—</span></div>
+        <div class="os-sep"></div>
+        <div class="os-row os-total">
+          <span class="k">Total Pembayaran</span>
+          <span class="v" id="os-total">—</span>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-ghost" onclick="window.closeBuy()">BATAL</button>
+        <button class="btn-primary" id="btn-confirm" onclick="confirmBuy()">KONFIRMASI PEMBELIAN</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: QR CODE ═══ -->
+<div class="overlay" id="qr-modal" onclick="closeQrOverlay(event)">
+  <div class="modal" style="max-width:400px">
+    <button class="modal-close" onclick="window.closeQr()">✕</button>
+    <div class="qr-center">
+      <div class="modal-eye">// TIKET DIGITAL</div>
+      <div class="modal-title" id="qr-title">TIKET</div>
+      <div class="modal-sub" id="qr-sub">—</div>
+      <div class="qr-wrap" id="qr-box"></div>
+      <div class="qr-id" id="qr-id"></div>
+      <div class="qr-deets" id="qr-deets"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: LOGOUT ═══ -->
+<div class="overlay" id="logout-modal" onclick="if(event.target===this)window.closeLogout()">
+  <div class="modal" style="max-width:380px;text-align:center">
+    <button class="modal-close" onclick="window.closeLogout()">✕</button>
+    <div style="font-size:44px;margin-bottom:14px;filter:drop-shadow(0 0 14px rgba(255,77,109,.4))">👋</div>
+    <div class="modal-title" style="font-size:18px;margin-bottom:6px">YAKIN MAU KELUAR?</div>
+    <div class="modal-sub" style="margin-bottom:28px">Kamu akan logout dari akun ini.<br>Wahana masih menunggumu!</div>
+    <div style="display:flex;gap:10px;justify-content:center">
+      <button class="btn-ghost" onclick="window.closeLogout()">STAY</button>
+      <button class="btn-danger" onclick="window.confirmLogout()">⏻ &nbsp;YA, KELUAR</button>
+    </div>
+  </div>
+</div>
+
+<!-- BG CANVAS SCRIPT -->
+<script src="js/canvas.js"></script>
+
+<script type="module" src="js/inlineMap.js">
+</script>
+</body>
+</html>

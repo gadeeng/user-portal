@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DUFAN — Masuk / Daftar</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎢</text></svg>"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link href="css/auth.css" rel="stylesheet"/>
+</head>
+<body>
+<canvas id="bg-canvas"></canvas>
+<div class="noise"></div>
+<div class="scanlines"></div>
+
+<a href="index.html" class="back-btn">
+  <span class="back-arrow">←</span>
+  <span class="back-label">KEMBALI</span>
+</a>
+
+<style>
+.back-btn {
+  position: fixed;
+  top: 20px;
+  left: 24px;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px 8px 12px;
+  background: rgba(4,9,26,0.7);
+  border: 1px solid rgba(0,229,255,0.15);
+  border-radius: 40px;
+  text-decoration: none;
+  backdrop-filter: blur(10px);
+  transition: all 0.25s;
+  animation: fadeUp .6s ease both;
+}
+.back-btn:hover {
+  background: rgba(0,229,255,0.08);
+  border-color: rgba(0,229,255,0.35);
+  transform: translateX(-2px);
+}
+.back-arrow {
+  font-size: 14px;
+  color: var(--cyan);
+  transition: transform .25s;
+}
+.back-btn:hover .back-arrow {
+  transform: translateX(-3px);
+}
+.back-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2.5px;
+  color: var(--sub);
+  transition: color .25s;
+}
+.back-btn:hover .back-label {
+  color: var(--cyan);
+}
+</style>
+
+<div class="stage">
+  <div class="hero">
+    <div class="hero-eyebrow">// PORTAL RESMI PENGUNJUNG — ANCOL · JAKARTA</div>
+    <div class="hero-logo">
+      <div class="logo-icon">🎢</div>
+      <div class="logo-text">DUFAN</div>
+    </div>
+    <div class="hero-tagline">Masuk ke dunia hiburan terbesar Indonesia.<br><em>Rute personal. Antrian cerdas. Momen tak terlupakan.</em></div>
+    <div class="hero-features">
+      <div class="feat"><div class="feat-icon">🗺️</div><div class="feat-text"><strong>Peta Live Realtime</strong>Pantau status antrian semua wahana seketika</div></div>
+      <div class="feat"><div class="feat-icon">⚡</div><div class="feat-text"><strong>Rute Personal</strong>Algoritma rekomendasi wahana berdasarkan profilmu</div></div>
+      <div class="feat"><div class="feat-icon">🎟️</div><div class="feat-text"><strong>Tiket Digital</strong>Beli & scan langsung dari smartphone</div></div>
+    </div>
+    <div class="hero-bottom">© 2025 DUFAN ANCOL · SISTEM TIKET ELEKTRONIK v2.0</div>
+  </div>
+
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <div class="tab-row">
+        <div class="tab-slider" id="tab-slider"></div>
+        <button class="tab-btn active" id="tb-login" onclick="gotoTab('login')">MASUK</button>
+        <button class="tab-btn" id="tb-reg" onclick="gotoTab('register')">DAFTAR</button>
+      </div>
+
+      <!-- LOGIN -->
+      <div id="pane-login" class="form-panel">
+        <div class="card-title">Selamat datang</div>
+        <div class="card-sub">Masuk ke akun Dufan kamu</div>
+        <div class="field">
+          <div class="fl">EMAIL <span class="req">*</span></div>
+          <input class="fi" id="l-email" type="email" placeholder="email@contoh.com" autocomplete="email"/>
+          <div class="ferr" id="le-email"></div>
+        </div>
+        <div class="field">
+          <div class="fl">PASSWORD <span class="req">*</span></div>
+          <div class="pw-wrap">
+            <input class="fi" id="l-pw" type="password" placeholder="Password kamu" autocomplete="current-password"/>
+            <button class="pw-eye" onclick="togglePw('l-pw',this)" tabindex="-1">👁</button>
+          </div>
+          <div class="ferr" id="le-pw"></div>
+        </div>
+        <a class="forgot-link" onclick="doForgot()">Lupa password?</a>
+        <button class="btn-submit" id="btn-login" onclick="doLogin()">MASUK</button>
+        <div class="or-row"><span>belum punya akun?</span></div>
+        <div style="text-align:center"><span onclick="gotoTab('register')" style="font-size:13px;color:var(--cyan);cursor:pointer;opacity:.8;transition:.2s" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.8">Daftar sekarang →</span></div>
+      </div>
+
+      <!-- REGISTER -->
+      <div id="pane-reg" class="form-panel hidden">
+        <div class="card-title">Buat akun baru</div>
+        <div class="card-sub">Satu akun untuk semua wahana</div>
+        <div class="field">
+          <div class="fl">NAMA LENGKAP <span class="req">*</span></div>
+          <input class="fi" id="r-name" type="text" placeholder="Nama lengkap kamu"/>
+          <div class="ferr" id="re-name"></div>
+        </div>
+        <div class="field-row col2">
+          <div>
+            <div class="fl">EMAIL <span class="req">*</span></div>
+            <input class="fi" id="r-email" type="email" placeholder="email@contoh.com"/>
+            <div class="ferr" id="re-email"></div>
+          </div>
+          <div>
+            <div class="fl">NO. HP <span class="req">*</span></div>
+            <input class="fi" id="r-phone" type="tel" placeholder="08xx-xxxx-xxxx"/>
+            <div class="ferr" id="re-phone"></div>
+          </div>
+        </div>
+        <div class="field-row col2">
+          <div>
+            <div class="fl">PASSWORD <span class="req">*</span></div>
+            <div class="pw-wrap">
+              <input class="fi" id="r-pw" type="password" placeholder="Min. 6 karakter"/>
+              <button class="pw-eye" onclick="togglePw('r-pw',this)" tabindex="-1">👁</button>
+            </div>
+            <div class="ferr" id="re-pw"></div>
+          </div>
+          <div>
+            <div class="fl">KONFIRMASI <span class="req">*</span></div>
+            <div class="pw-wrap">
+              <input class="fi" id="r-conf" type="password" placeholder="Ulangi password"/>
+              <button class="pw-eye" onclick="togglePw('r-conf',this)" tabindex="-1">👁</button>
+            </div>
+            <div class="ferr" id="re-conf"></div>
+          </div>
+        </div>
+        <button class="btn-submit" id="btn-reg" onclick="doRegister()">BUAT AKUN</button>
+        <div class="or-row" style="margin-top:14px"><span>sudah punya akun?</span></div>
+        <div style="text-align:center"><span onclick="gotoTab('login')" style="font-size:13px;color:var(--cyan);cursor:pointer;opacity:.8;transition:.2s" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.8">Masuk →</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><span id="t-icon"></span><span id="t-msg"></span></div>
+
+<script src="js/authAnimate.js"></script>
+<script type="module" src="js/auth.js"></script>
+
+</body>
+</html>

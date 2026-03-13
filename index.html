@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>DUFAN — Dunia Fantasi Ancol</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎢</text></svg>"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
+<link href="css/style.css" rel="stylesheet"/>
+<link href="css/map.css" rel="stylesheet"/>
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+<div class="noise"></div>
+<div class="scanlines"></div>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="nav-brand">
+    <div class="nav-dot"></div>
+    <div class="nav-logo">DUFAN</div>
+  </div>
+  <div class="nav-links">
+    <a class="nav-link" href="#fitur">FITUR</a>
+    <a class="nav-link" href="#paket">PAKET</a>
+    <a href="login.html" class="nav-btn">MASUK</a>
+  </div>
+</nav>
+
+<div class="page">
+
+  <!-- ═══════════ HERO ═══════════ -->
+  <section class="s-hero" id="hero">
+    <div class="hero-eyebrow">// PORTAL RESMI PENGUNJUNG — ANCOL · JAKARTA</div>
+    <div class="hero-logo-wrap">
+      <div class="hero-icon">🎢</div>
+    </div>
+    <div class="hero-title">DUFAN</div>
+    <div class="hero-tagline">
+      Masuk ke dunia hiburan terbesar Indonesia.<br>
+      <em>Rute personal. Antrian cerdas. Momen tak terlupakan.</em>
+    </div>
+    <div class="hero-cta-row">
+      <a href="login.html" class="btn-cta">🎟️ &nbsp;BELI TIKET SEKARANG</a>
+      <a href="login.html" class="btn-cta-outline">SUDAH PUNYA AKUN →</a>
+    </div>
+    <div class="hero-scroll" onclick="document.getElementById('fitur').scrollIntoView({behavior:'smooth'})">
+      <span>SCROLL</span>
+      <div class="hero-scroll-line"></div>
+    </div>
+  </section>
+
+  <!-- STATS BAR -->
+  <div class="stats-bar reveal">
+    <div class="stat-item">
+      <div class="stat-n">27+</div>
+      <div class="stat-l">WAHANA SERU</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-n">2 Juta+</div>
+      <div class="stat-l">PENGUNJUNG / TAHUN</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-n">40 Th</div>
+      <div class="stat-l">BERDIRI SEJAK 1985</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-n">5 ⭐</div>
+      <div class="stat-l">RATING PENGUNJUNG</div>
+    </div>
+  </div>
+
+  <!-- ═══════════ FITUR ═══════════ -->
+  <section class="s-features" id="fitur">
+    <div class="sec-eye reveal">// KENAPA DUFAN?</div>
+    <div class="sec-title reveal">Teknologi untuk Pengalaman Terbaik</div>
+    <div class="sec-sub reveal">Sistem tiket digital generasi baru yang membuat kunjunganmu lebih seru dan efisien</div>
+
+    <div class="features-grid">
+      <div class="feat-card reveal" style="--fc:var(--cyan)">
+        <div class="feat-card-icon">🗺️</div>
+        <div class="feat-card-title">Peta Live Realtime</div>
+        <div class="feat-card-desc">Pantau status antrian semua wahana secara langsung. Tidak perlu keliling dulu hanya untuk tahu antrian panjang.</div>
+        <div class="feat-card-tag">REALTIME</div>
+      </div>
+      <div class="feat-card reveal" style="--fc:var(--green)">
+        <div class="feat-card-icon">🎟️</div>
+        <div class="feat-card-title">Tiket Digital</div>
+        <div class="feat-card-desc">Beli tiket langsung dari smartphone, tidak perlu antre di loket. Scan QR code di pintu masuk wahana.</div>
+        <div class="feat-card-tag">PAPERLESS</div>
+      </div>
+      <div class="feat-card reveal" style="--fc:var(--cyan2)">
+        <div class="feat-card-icon">📊</div>
+        <div class="feat-card-title">Dashboard Pengunjung</div>
+        <div class="feat-card-desc">Lihat riwayat tiket, status kunjungan, dan kelola semua tiketmu dalam satu tampilan yang bersih.</div>
+        <div class="feat-card-tag">ALL-IN-ONE</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ PAKET HARGA ═══════════ -->
+  <section class="s-pricing" id="paket">
+    <div class="sec-eye reveal">// PILIH PAKETMU</div>
+    <div class="sec-title reveal">Harga Transparan, Tanpa Biaya Tersembunyi</div>
+    <div class="sec-sub reveal">Dari solo traveler hingga rombongan keluarga besar, kami punya paket untuk semua</div>
+
+    <div class="pricing-grid">
+      <!-- SOLO -->
+      <div class="pkg-card reveal" style="--pc:#bbe70e">
+        <div class="pkg-em">🧍</div>
+        <div class="pkg-name">SOLO</div>
+        <div class="pkg-desc">Sempurna untuk kamu yang datang sendiri. Nikmati semua wahana dengan antrian reguler.</div>
+        <div class="pkg-price-wrap">
+          <div class="pkg-price">Rp 250.000</div>
+          <div class="pkg-price-unit">PER TIKET · 1 DEWASA</div>
+        </div>
+        <div class="pkg-divider"></div>
+        <div class="pkg-feats">
+          <div class="pkg-feat"><div class="pkg-feat-dot">✓</div>1 tiket masuk dewasa</div>
+          <div class="pkg-feat"><div class="pkg-feat-dot">✓</div>Akses semua 27 wahana</div>
+          <div class="pkg-feat"><div class="pkg-feat-dot">✓</div>QR code digital</div>
+          <div class="pkg-feat"><div class="pkg-feat-dot">✓</div>Antrian reguler</div>
+        </div>
+        <button class="pkg-cta-outline" onclick="location.href='login.html'">PILIH PAKET</button>
+      </div>
+
+      <!-- GROUP PRIORITY (featured) -->
+      <div class="pkg-card featured reveal" style="--pc:var(--cyan)">
+        <div class="pkg-badge">TERPOPULER</div>
+        <div class="pkg-em">👫⚡</div>
+        <div class="pkg-name">GROUP PRIORITY</div>
+        <div class="pkg-desc">Datang ramai-ramai dengan jalur fast track. Hemat waktu, maksimal keseruan!</div>
+        <div class="pkg-price-wrap">
+          <div class="pkg-price">Rp 600.000</div>
+          <div class="pkg-price-unit">PER ORANG · MIN. 2 DEWASA</div>
+        </div>
+        <div class="pkg-divider"></div>
+        <div class="pkg-feats">
+          <div class="pkg-feat"><div class="pkg-feat-dot">✓</div>2–10 tiket dewasa</div>
+          <div class="pkg-feat"><div class="pkg-feat-dot">✓</div>Akses semua 27 wahana</div>
+          <div class="pkg-feat"><div class="pkg-feat-dot">✓</div>⚡ Fast track semua wahana</div>
+          <div class="pkg-feat"><div class="pkg-feat-dot">✓</div>QR code digital per orang</div>
+          <div class="pkg-feat"><div class="pkg-feat-dot">✓</div>Jalur prioritas tanpa antre panjang</div>
+        </div>
+        <button class="pkg-cta" onclick="location.href='login.html'">PILIH PAKET</button>
+      </div>
+
+      <!-- FAMILY -->
+      <div class="pkg-card reveal" style="--pc:#38bdf8">
+        <div class="pkg-em">👨‍👩‍👧</div>
+        <div class="pkg-name">FAMILY</div>
+        <div class="pkg-desc">Paket lengkap untuk seluruh keluarga. Anak-anak boleh ikut dengan akses wahana khusus mereka.</div>
+        <div class="pkg-price-wrap">
+          <div class="pkg-price">Rp 200.000</div>
+          <div class="pkg-price-unit">PER ORANG · DEWASA + ANAK</div>
+        </div>
+        <div class="pkg-divider"></div>
+        <div class="pkg-feats">
+          <div class="pkg-feat"><div class="pkg-feat-dot">✓</div>1–4 dewasa + anak-anak</div>
+          <div class="pkg-feat"><div class="pkg-feat-dot">✓</div>Akses wahana anak & dewasa</div>
+          <div class="pkg-feat"><div class="pkg-feat-dot">✓</div>Filter wahana by tinggi badan</div>
+          <div class="pkg-feat"><div class="pkg-feat-dot">✓</div>QR code digital per orang</div>
+        </div>
+        <button class="pkg-cta-outline" onclick="location.href='login.html'">PILIH PAKET</button>
+      </div>
+    </div>
+
+    <div class="pricing-note reveal">* Harga belum termasuk pajak · Tiket berlaku 1 hari kunjungan · Harga dapat berubah sewaktu-waktu</div>
+  </section>
+
+  <!-- ═══════════ CTA ═══════════ -->
+  <section class="s-cta" id="mulai">
+    <div class="cta-glow"></div>
+    <div class="cta-inner reveal">
+      <div class="cta-eye">// SIAP BERPETUALANG?</div>
+      <div class="cta-title">Satu Tiket.<br>Ribuan Momen.</div>
+      <div class="cta-sub">Bergabung dengan jutaan pengunjung yang sudah merasakan serunya Dunia Fantasi Ancol. Buat akun gratis dan pesan tiketmu sekarang.</div>
+      <div class="cta-btns">
+        <a href="login.html" class="btn-cta">🎟️ &nbsp;BELI TIKET SEKARANG</a>
+        <a href="login.html" class="btn-cta-outline">SUDAH PUNYA AKUN →</a>
+      </div>
+      <div class="cta-note">Gratis daftar · Tiket langsung aktif · Tanpa biaya tambahan</div>
+    </div>
+  </section>
+
+</div><!-- /page -->
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-brand">🎢 DUFAN ANCOL</div>
+  <div class="footer-copy">© 2026 DUFAN ANCOL · Tim Sayang Lomba Sayangg</div>
+</footer>
+
+<!-- BG CANVAS -->
+<script src="js/script.js"> </script>
+
+<!-- SCROLL REVEAL -->
+<script src="js/observer.js"></script>
+</body>
+</html>
