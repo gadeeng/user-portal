@@ -2,6 +2,17 @@ import{initializeApp}from'https://www.gstatic.com/firebasejs/10.14.1/firebase-ap
 import{getDatabase,ref,set,get,onValue}from'https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js';
 import{getAuth,onAuthStateChanged,signOut}from'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
 
+// ── PATCH: import engine rekomendasi ──
+import { initRekomendasi, updateTicketOptions } from './rekomendasi.js';
+
+// ── PATCH: terima NODES & CONNS dari iframe mapUser.html, lalu init Floyd-Warshall ──
+window.addEventListener('message', e => {
+  if (e.data?.type !== 'MAP_DATA') return;
+  window._NODES = e.data.NODES;
+  window._CONNS = e.data.CONNS;
+  initRekomendasi(window._NODES, window._CONNS);
+});
+
 const cfg={
   apiKey:'AIzaSyDZohweBiGofXFd2HD-VH5w3BsUc2zaFqc',
   authDomain:'ticketing-project-3bcf6.firebaseapp.com',
@@ -67,8 +78,10 @@ function listenTickets(uid){
     const ids=Object.keys(snap.val());
     const res=await Promise.all(ids.map(id=>get(ref(db,`tickets/${id}`))));
     tickets=res.filter(s=>s.exists()).map(s=>s.val());
+    window._tickets = tickets; // ── PATCH: expose ke rekomendasi.js
     renderTickets();
     updateStats();
+    updateTicketOptions(tickets); // ── PATCH: isi dropdown pilih tiket
   });
 }
 
@@ -199,6 +212,8 @@ window.confirmBuy=async function(){
   try{
     const total=a+c;
     const promises=[];
+    // groupId: semua tiket dalam satu transaksi berbagi ID yang sama
+    const groupId=Math.random().toString(36).substring(2,10).toUpperCase();
     for(let i=0;i<total;i++){
       const prefix=pkg.priority?'FT':'RG';
       const d=date.replace(/-/g,'').slice(2);
@@ -211,6 +226,8 @@ window.confirmBuy=async function(){
         numAdults:a,numChildren:c,minHeight:minH,
         status:'VALID',usedAt:null,userId:me.uid,
         createdAt:new Date().toISOString(),
+        groupId,
+        isGroupLeader: i === 0,
       };
       promises.push(set(ref(db,`tickets/${id}`),ticket));
       promises.push(set(ref(db,`users/${me.uid}/tickets/${id}`),true));
@@ -254,19 +271,24 @@ window.closeQr=function(){document.getElementById('qr-modal').classList.remove('
 window.closeQrOverlay=function(e){if(e.target===document.getElementById('qr-modal'))window.closeQr()};
 
 /* ── PETA WAHANA TOGGLE ── */
-let mapLoaded = false;
-window.toggleMap = function(){
-  const wrap = document.getElementById('map-iframe-wrap');
-  const btn  = document.getElementById('map-toggle-btn');
-  const lbl  = document.getElementById('map-toggle-lbl');
+// Iframe langsung dimuat di background saat halaman load
+// agar map.js bisa kirim postMessage (NODES, CONNS, qData) ke rekomendasi
+// Iframe dimuat segera di background — pakai getAttribute bukan .src
+// karena iframe.src="" di HTML dibaca sebagai URL halaman saat ini oleh JS
+window.addEventListener('DOMContentLoaded', () => {
   const iframe = document.getElementById('map-iframe');
-  const isOpen = wrap.classList.toggle('open');
-  btn.classList.toggle('open', isOpen);
-  lbl.textContent = isOpen ? 'SEMBUNYIKAN PETA' : 'TAMPILKAN PETA';
-  if (isOpen && !mapLoaded) {
-    iframe.src = 'mapUser.html';
-    mapLoaded = true;
-  }
+  if (iframe && !iframe.getAttribute('src')) iframe.src = 'mapUser.html';
+});
+
+let mapOpen = false;
+window.toggleMap = function(){
+  const wrap   = document.getElementById('map-iframe-wrap');
+  const btn    = document.getElementById('map-toggle-btn');
+  const lbl    = document.getElementById('map-toggle-lbl');
+  mapOpen      = !mapOpen;
+  wrap.classList.toggle('open', mapOpen);
+  btn.classList.toggle('open', mapOpen);
+  lbl.textContent = mapOpen ? 'SEMBUNYIKAN PETA' : 'TAMPILKAN PETA';
 };
 
 /* ── LOGOUT ── */

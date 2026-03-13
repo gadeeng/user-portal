@@ -1,4 +1,3 @@
-
 /* =================================================================
    NODE DATA — positions from main.js createMap()
    Format: { x, y, type, name, queueId, cap }
@@ -509,6 +508,7 @@ function initApp() {
   window._fbListen('queue', val => {
     if (!val) return;
     qData = { ...qData, ...val };
+    window._qData = qData; // ── PATCH: expose ke rekomendasi.js
     draw();
     updateStats();
     if (hoveredIdx >= 0) updateTooltip(hoveredIdx);
@@ -522,6 +522,7 @@ function initApp() {
     Object.keys(val).forEach(k => {
       wtData[k] = { in: val[k].in||0, out: val[k].out||0 };
     });
+    window._wtData = wtData;
     draw();
     updateStats();
     if (hoveredIdx >= 0) updateTooltip(hoveredIdx);
@@ -539,6 +540,10 @@ function initApp() {
   startAnimLoop();
   updateStats();
   showToast('success','🔥','Terhubung ke Firebase — memuat data antrian...');
+
+  // ── kirim NODES & CONNS ke parent (dashboard.html) ──
+  // Diperlukan karena map.js jalan di dalam iframe mapUser.html
+  window.parent.postMessage({ type: 'MAP_DATA', NODES, CONNS }, '*');
 }
 
 if (window._fbReady) initApp();
