@@ -13,6 +13,38 @@ window.addEventListener('message', e => {
   initRekomendasi(window._NODES, window._CONNS);
 });
 
+/* ── TABS ── */
+let currentTab = 'semua';
+
+window.switchTab = function(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+  renderTickets();
+};
+
+function getFilteredTickets() {
+  switch (currentTab) {
+    case 'valid':     return tickets.filter(t => (t.status||'VALID').toUpperCase() === 'VALID');
+    case 'used':      return tickets.filter(t => (t.status||'').toUpperCase() === 'USED');
+    case 'expired':   return tickets.filter(t => (t.status||'').toUpperCase() === 'EXPIRED');
+    case 'fasttrack': return tickets.filter(t => t.fastTrack);
+    default:          return tickets;
+  }
+}
+
+function updateTabCounts() {
+  const counts = {
+    semua:     tickets.length,
+    valid:     tickets.filter(t => (t.status||'VALID').toUpperCase() === 'VALID').length,
+    used:      tickets.filter(t => (t.status||'').toUpperCase() === 'USED').length,
+    expired:   tickets.filter(t => (t.status||'').toUpperCase() === 'EXPIRED').length,
+    fasttrack: tickets.filter(t => t.fastTrack).length,
+  };
+  Object.entries(counts).forEach(([k, v]) => {
+    const el = document.getElementById('tab-count-' + k);
+    if (el) el.textContent = v;
+  });
+}
 const cfg={
   apiKey:'AIzaSyDZohweBiGofXFd2HD-VH5w3BsUc2zaFqc',
   authDomain:'ticketing-project-3bcf6.firebaseapp.com',
@@ -78,15 +110,17 @@ function listenTickets(uid){
     const ids=Object.keys(snap.val());
     const res=await Promise.all(ids.map(id=>get(ref(db,`tickets/${id}`))));
     tickets=res.filter(s=>s.exists()).map(s=>s.val());
-    window._tickets = tickets; // ── PATCH: expose ke rekomendasi.js
+    window._tickets = tickets;
     renderTickets();
     updateStats();
-    updateTicketOptions(tickets); // ── PATCH: isi dropdown pilih tiket
+    updateTicketOptions(tickets);
   });
 }
 
 function renderTickets(){
   const grid=document.getElementById('ticket-grid');
+  const filtered=getFilteredTickets();
+
   if(!tickets.length){
     grid.innerHTML=`
       <div class="empty-state">
@@ -97,18 +131,34 @@ function renderTickets(){
       </div>`;
     return;
   }
-  grid.innerHTML=tickets.map(tcHTML).join('');
+
+  if(!filtered.length){
+    const tabNames={valid:'tiket valid',used:'tiket terpakai',expired:'tiket kadaluarsa',fasttrack:'tiket fast track',semua:'tiket'};
+    grid.innerHTML=`
+      <div class="empty-state">
+        <div class="empty-icon">🔍</div>
+        <div class="empty-title">TIDAK ADA ${(tabNames[currentTab]||'tiket').toUpperCase()}</div>
+        <div class="empty-desc">Belum ada ${tabNames[currentTab]||'tiket'} di kategori ini.</div>
+      </div>`;
+    return;
+  }
+
+  grid.innerHTML=filtered.map(tcHTML).join('');
 }
 
 function tcHTML(t){
-  const clr=PKG_CLR[t.paket]||'var(--cyan)';
+  const clr=PKG_CLR[t.paket]||'#FF6B2B';
   const pkg=PKGS[t.paket]||{};
   const date=t.date
     ?new Date(t.date+'T00:00:00').toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'})
     :'—';
   const st=(t.status||'VALID').toLowerCase();
+  const stClass=st==='used'?' tc-used':st==='expired'?' tc-expired':'';
+  const usedAt=t.usedAt
+    ?new Date(t.usedAt).toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})
+    :null;
   return `
-  <div class="tc${t.fastTrack?' is-ft':''}" style="--tc-clr:${clr}">
+  <div class="tc${t.fastTrack?' is-ft':''}${stClass}" style="--tc-clr:${clr}">
     <div class="tc-head">
       <div class="tc-id">${t.id}</div>
       <div class="tc-badges">
@@ -121,27 +171,33 @@ function tcHTML(t){
       <div class="tc-email">${t.email||'—'}</div>
       <div class="tc-metas">
         <div class="tc-meta">
-          <div class="lbl">TANGGAL</div>
+          <div class="lbl">TANGGAL KUNJUNGAN</div>
           <div class="val">${date}</div>
         </div>
         <div class="tc-meta">
           <div class="lbl">ANGGOTA</div>
           <div class="val">${t.numAdults||1} dewasa${t.numChildren?' + '+t.numChildren+' anak':''}</div>
         </div>
+        ${usedAt?`
+        <div class="tc-meta" style="grid-column:1/-1">
+          <div class="lbl">DIGUNAKAN PADA</div>
+          <div class="val" style="color:var(--muted)">📌 ${usedAt}</div>
+        </div>`:''}
       </div>
     </div>
     <div class="tc-foot">
       <div class="pkg-pill"><div class="pkg-dot"></div>&nbsp;${pkg.name||t.paket||'—'}</div>
-      <button class="btn-sm" onclick="showQR('${t.id}')">QR CODE</button>
+      ${st==='valid'?`<button class="btn-sm" onclick="showQR('${t.id}')">QR CODE</button>`:`<span style="font-family:'Space Mono',monospace;font-size:9px;color:var(--muted)">${st==='used'?'SUDAH DIPAKAI':'KADALUARSA'}</span>`}
     </div>
   </div>`;
 }
 
 function updateStats(){
   document.getElementById('s-total').textContent=tickets.length;
-  document.getElementById('s-valid').textContent=tickets.filter(t=>t.status==='VALID').length;
+  document.getElementById('s-valid').textContent=tickets.filter(t=>(t.status||'VALID').toUpperCase()==='VALID').length;
   document.getElementById('s-ft').textContent=tickets.filter(t=>t.fastTrack).length;
-  document.getElementById('s-used').textContent=tickets.filter(t=>t.status==='USED').length;
+  document.getElementById('s-used').textContent=tickets.filter(t=>(t.status||'').toUpperCase()==='USED').length;
+  updateTabCounts();
 }
 
 /* ── BUY MODAL ── */

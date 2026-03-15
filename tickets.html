@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Tiket & Harga — DUFAN Ancol</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎢</text></svg>"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<link href="css/style.css" rel="stylesheet"/>
+<link href="css/tickets.css" rel="stylesheet"/>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar" id="navbar">
+  <a class="nav-brand" href="index.html">
+    <div class="nav-logo-icon">🎢</div>
+    <div class="nav-logo-text">DUFAN</div>
+  </a>
+  <div class="nav-links">
+    <a class="nav-link" href="index.html">Beranda</a>
+    <a class="nav-link" href="attractions.html">Wahana</a>
+    <a class="nav-link active" href="tickets.html">Tiket & Harga</a>
+    <a class="nav-link" href="login.html">Peta Live</a>
+  </div>
+  <div class="nav-right">
+    <a href="login.html" class="nav-btn-ghost">Masuk</a>
+    <a href="login.html" class="nav-btn">🎟️ Beli Tiket</a>
+  </div>
+  <button class="nav-hamburger" id="hamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<div class="page">
+
+  <!-- ── PAGE HEADER ── -->
+  <header class="tix-header">
+    <div class="tix-header-bg"></div>
+    <div class="tix-header-inner">
+      <div class="sec-tag" style="background:rgba(255,255,255,.15);color:white;">🎟️ HARGA TIKET</div>
+      <h1 class="tix-header-title">Harga Jelas,<br><span class="highlight-text">Keseruan Maksimal!</span></h1>
+      <p class="tix-header-sub">Beli tiket online lebih hemat. Pilih paket yang sesuai dan langsung scan QR di pintu masuk!</p>
+      <div class="tix-header-trust">
+        <span>✅ Tiket langsung aktif</span>
+        <span>✅ Tanpa biaya tambahan</span>
+        <span>✅ Bisa refund 24 jam sebelum kunjungan</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── INFO JAM BUKA ── -->
+  <section class="tix-info-bar">
+    <div class="tix-info-item">
+      <div class="tix-info-icon">🕗</div>
+      <div>
+        <div class="tix-info-label">Senin – Jumat</div>
+        <div class="tix-info-val">10.00 – 18.00 WIB</div>
+      </div>
+    </div>
+    <div class="tix-info-divider"></div>
+    <div class="tix-info-item">
+      <div class="tix-info-icon">🕗</div>
+      <div>
+        <div class="tix-info-label">Sabtu – Minggu & Libur</div>
+        <div class="tix-info-val">10.00 – 20.00 WIB</div>
+      </div>
+    </div>
+    <div class="tix-info-divider"></div>
+    <div class="tix-info-item">
+      <div class="tix-info-icon">📍</div>
+      <div>
+        <div class="tix-info-label">Lokasi</div>
+        <div class="tix-info-val">Jl. Lodan Timur No.7, Ancol, Jakarta Utara</div>
+      </div>
+    </div>
+    <div class="tix-info-divider"></div>
+    <div class="tix-info-item">
+      <div class="tix-info-icon">📅</div>
+      <div>
+        <div class="tix-info-label">Berlaku</div>
+        <div class="tix-info-val">1 hari kunjungan</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── TICKET PACKAGES ── -->
+  <section class="tix-section" id="paket">
+    <div class="tix-section-header reveal">
+      <div class="sec-tag">🎫 PILIH PAKETMU</div>
+      <div class="sec-title">Tersedia untuk<br>Semua Kalangan</div>
+      <div class="sec-sub">Dari solo traveler hingga rombongan keluarga besar — kami punya paket untuk semuanya.</div>
+    </div>
+
+    <div class="tix-grid">
+
+      <!-- SOLO -->
+      <div class="tix-card reveal" style="--tc:#FF6B2B">
+        <div class="tix-card-top">
+          <div class="tix-card-icon">🧍</div>
+          <div class="tix-card-tag">SOLO</div>
+        </div>
+        <div class="tix-card-name">Tiket Solo</div>
+        <div class="tix-card-desc">Sempurna untuk kamu yang datang sendiri. Akses penuh ke semua wahana dan area taman seharian.</div>
+
+        <div class="tix-price-wrap">
+          <div class="tix-price-cat">
+            <div class="tix-price-label">Harga per orang</div>
+            <div class="tix-price tix-price--big">Rp 350.000</div>
+          </div>
+        </div>
+
+        <div class="tix-divider"></div>
+
+        <div class="tix-feats">
+          <div class="tix-feat">✅ Akses semua wahana</div>
+          <div class="tix-feat">✅ QR code digital</div>
+          <div class="tix-feat">✅ Berlaku 1 hari penuh</div>
+          <div class="tix-feat tix-feat--no">⚡ Fast Track semua wahana</div>
+        </div>
+
+        <a href="login.html" class="tix-cta tix-cta--outline">Beli Tiket Solo →</a>
+      </div>
+
+      <!-- GROUP (featured) -->
+      <div class="tix-card tix-card--featured reveal" style="--tc:#00B4FF">
+        <div class="tix-card-popular">⚡ PALING SERU</div>
+        <div class="tix-card-top">
+          <div class="tix-card-icon">👫</div>
+          <div class="tix-card-tag">GROUP</div>
+        </div>
+        <div class="tix-card-name">Tiket Grup + Fast Track</div>
+        <div class="tix-card-desc">Datang ramai-ramai dengan jalur prioritas! Lewati antrean, langsung nikmati semua wahana tanpa nunggu lama.</div>
+
+        <div class="tix-price-wrap">
+          <div class="tix-price-cat">
+            <div class="tix-price-label">Per orang · min. 2 orang</div>
+            <div class="tix-price tix-price--big">Rp 500.000</div>
+          </div>
+        </div>
+
+        <div class="tix-divider"></div>
+
+        <div class="tix-feats">
+          <div class="tix-feat">✅ Akses semua wahana</div>
+          <div class="tix-feat">✅ QR code digital per orang</div>
+          <div class="tix-feat">✅ Berlaku 1 hari penuh</div>
+          <div class="tix-feat">⚡ Fast Track semua wahana</div>
+        </div>
+
+        <a href="login.html" class="tix-cta">⚡ Beli Fast Track</a>
+      </div>
+
+      <!-- FAMILY -->
+      <div class="tix-card reveal" style="--tc:#22C55E">
+        <div class="tix-card-top">
+          <div class="tix-card-icon">👨‍👩‍👧‍👦</div>
+          <div class="tix-card-tag">FAMILY</div>
+        </div>
+        <div class="tix-card-name">Paket Keluarga</div>
+        <div class="tix-card-desc">Satu paket lengkap untuk seluruh keluarga. Lebih hemat dibanding beli satuan — langsung ajak semua!</div>
+
+        <div class="tix-price-wrap">
+          <div class="tix-price-cat">
+            <div class="tix-price-label">Paket 4 orang</div>
+            <div class="tix-price tix-price--big">Rp 1.250.000</div>
+            <div class="tix-price-save">Hemat Rp 150.000!</div>
+          </div>
+        </div>
+
+        <div class="tix-divider"></div>
+
+        <div class="tix-feats">
+          <div class="tix-feat">✅ Akses semua wahana</div>
+          <div class="tix-feat">✅ QR code per orang</div>
+          <div class="tix-feat">✅ Berlaku 1 hari penuh</div>
+        </div>
+
+        <a href="login.html" class="tix-cta tix-cta--outline">Beli Paket Family →</a>
+      </div>
+
+    </div>
+
+    <div class="tix-note reveal">
+      * Harga belum termasuk pajak · Tiket berlaku 1 hari kunjungan · Harga dapat berubah sewaktu-waktu<br>
+      Fast Track berlaku untuk paket Solo dan Grup · Hubungi <strong>Admin </strong> untuk pemesanan rombongan sekolah/korporat
+    </div>
+  </section>
+
+   <section class="tix-faq" id="faq">
+    <div class="tix-faq-header reveal">
+      <div class="sec-tag">❓ FAQ</div>
+      <div class="sec-title">Pertanyaan yang<br>Sering Ditanyakan</div>
+    </div>
+
+    <div class="faq-list" id="faqList">
+
+      <div class="faq-item reveal">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span>Apakah bisa beli tiket di tempat (on-site)?</span>
+          <span class="faq-arrow">▾</span>
+        </button>
+        <div class="faq-a">
+          Bisa, loket tiket tersedia di pintu masuk DUFAN.
+        </div>
+      </div>
+
+      <div class="faq-item reveal">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span>Bagaimana cara menggunakan tiket digital?</span>
+          <span class="faq-arrow">▾</span>
+        </button>
+        <div class="faq-a">
+          Setelah pembelian berhasil, QR code tiket akan muncul di halaman akun. Tunjukkan QR code ke petugas atau scan mandiri di gate masuk.
+        </div>
+      </div>
+      
+      <div class="faq-item reveal">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span>Bagaimana jika saya ingin refund tiket?</span>
+          <span class="faq-arrow">▾</span>
+        </button>
+        <div class="faq-a">
+          Sesuai syarat dan ketentuan yang tertera pada saat pembelian tiket bahwa eticket tidak dapat dikembalikan (non-refundable).
+        </div>
+      </div>
+      
+      <div class="faq-item reveal">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span>Apakah bisa reschedule tanggal kunjungan tiket saya?</span>
+          <span class="faq-arrow">▾</span>
+        </button>
+        <div class="faq-a">
+          Sesuai ketentuan yang tertera pada saat pembelian tiket, bahwa tiket hanya bisa digunakan sesuai dengan tanggal yang dipilih. 
+        </div>
+      </div>
+      
+
+      <div class="faq-item reveal">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span>Berapa minimal orang untuk tiket grup?</span>
+          <span class="faq-arrow">▾</span>
+        </button>
+        <div class="faq-a">
+          Minimal 2 orang untuk mendapatkan harga tiket grup.
+        </div>
+      </div>
+
+      <div class="faq-item reveal">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span>Bisakah tiket digunakan di tanggal lain?</span>
+          <span class="faq-arrow">▾</span>
+        </button>
+        <div class="faq-a">
+          Tiket berlaku sesuai tanggal yang dipilih saat pemesanan. Reschedule dapat dilakukan maksimal 24 jam sebelum kunjungan melalui halaman akun, maksimal 1 kali per tiket.
+        </div>
+      </div>
+
+      <div class="faq-item reveal">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span>Apakah boleh membawa makanan dan minuman dari luar?</span>
+          <span class="faq-arrow">▾</span>
+        </button>
+        <div class="faq-a">
+          Makanan ringan dan minuman dalam kemasan tertutup diperbolehkan. Tersedia banyak pilihan kuliner dan restoran di dalam area taman dengan berbagai pilihan menu.
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── CTA ── -->
+  <section class="s-cta">
+    <div class="cta-deco1">🎊</div>
+    <div class="cta-deco2">🎡</div>
+    <div class="cta-inner reveal">
+      <div class="cta-badge">🎟️ SIAP BERANGKAT?</div>
+      <div class="cta-title">Pesan Sekarang,<br>Bayar Lebih Hemat!</div>
+      <div class="cta-sub">Tiket online lebih murah hingga 20% dari harga loket. Langsung aktif setelah pembayaran — tidak perlu cetak, cukup tunjukkan QR!</div>
+      <div class="cta-btns">
+        <a href="login.html" class="btn-primary btn-lg confetti-btn">🎟️ Beli Tiket Sekarang</a>
+        <a href="login.html" class="btn-secondary btn-lg">Sudah Punya Akun →</a>
+      </div>
+    </div>
+  </section>
+
+</div><!-- /page -->
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-top">
+    <div class="footer-brand-col">
+      <div class="footer-logo">🎢 DUFAN</div>
+      <div class="footer-tagline">Taman Bermain<br>Terbesar Indonesia sejak 1985</div>
+      <div class="footer-info">
+        <div class="footer-info-item">📍 Jl. Lodan Timur No.7, Ancol, Jakarta Utara</div>
+        <div class="footer-info-item">🕗 Senin–Jumat: 10.00–18.00 WIB</div>
+        <div class="footer-info-item">🕗 Sabtu–Minggu: 10.00–20.00 WIB</div>
+      </div>
+    </div>
+    <div class="footer-links">
+      <div class="footer-col">
+        <div class="footer-col-title">Jelajahi</div>
+        <a href="attractions.html">🎢 Wahana Seru</a>
+        <a href="map.html">🗺️ Peta Taman</a>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Tiket</div>
+        <a href="tickets.html">🎟️ Beli Tiket Online</a>
+        <a href="#paket">📦 Lihat Paket</a>
+        <a href="#faq">❓ FAQ</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-divider"></div>
+  <div class="footer-bottom">
+    <div class="footer-copy">© 2026 DUFAN · Tim Sayang Lomba Sayangg · All rights reserved</div>
+        <div class="footer-socials">
+      <a href="https://www.instagram.com/infodufan/" class="footer-social-btn" aria-label="Instagram">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+      </a>
+      <a href="https://www.tiktok.com/@dufanancol" class="footer-social-btn" aria-label="TikTok">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.28 6.28 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.19 8.19 0 0 0 4.79 1.53V6.78a4.85 4.85 0 0 1-1.02-.09z"/></svg>
+      </a>
+  </div>
+</footer>
+
+<script src="js/tickets.js"></script>
+</body>
+</html>

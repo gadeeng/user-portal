@@ -140,60 +140,208 @@ function resize() {
 const px = n => n.x * CW;
 const py = n => n.y * CH;
 
-/* ── Background (blueprint, same as main.js drawParkBackground) ── */
+/* ── Carnival stars (seeded so they don't move on every draw) ── */
+const STARS = (() => {
+  const arr = [];
+  // Use a simple seeded sequence so positions are deterministic
+  let s = 42;
+  const rng = () => { s = (s * 1664525 + 1013904223) & 0xffffffff; return (s >>> 0) / 0xffffffff; };
+  for (let i = 0; i < 120; i++) {
+    arr.push({
+      rx: rng(),   // relative x (0–1)
+      ry: rng() * 0.7,  // only top 70% of canvas
+      r:  rng() * 1.2 + 0.3,
+      a:  rng() * Math.PI * 2,  // twinkle phase offset
+      bright: rng()
+    });
+  }
+  return arr;
+})();
+
+/* ── Hanging festoon lights along the top ── */
+const FESTOONS = (() => {
+  const arr = [];
+  const colors = ['#FF6B2B','#FFD60A','#FF4785','#00B4FF','#22C55E','#9B5DE5','#FF8F5E'];
+  let s = 77;
+  const rng = () => { s = (s * 1664525 + 1013904223) & 0xffffffff; return (s >>> 0) / 0xffffffff; };
+  for (let i = 0; i < 28; i++) {
+    arr.push({ rx: i / 27, col: colors[i % colors.length], phase: rng() * Math.PI * 2 });
+  }
+  return arr;
+})();
+
+/* ── Background (Carnival Night Fair) ── */
 function drawBg() {
-  ctx.fillStyle = 'rgb(8,18,38)';
+  const t = Date.now() / 1000;
+
+  // ── Sky gradient: deep carnival purple → warm dark ──
+  const sky = ctx.createLinearGradient(0, 0, 0, CH);
+  sky.addColorStop(0,   '#1E1040'); // dark purple (brand --dark)
+  sky.addColorStop(0.45,'#2D1B69'); // mid purple  (brand --dark2)
+  sky.addColorStop(1,   '#3B1A3A'); // warm plum bottom
+  ctx.fillStyle = sky;
   ctx.fillRect(0, 0, CW, CH);
 
-  // Major grid
+  // ── Radial warm glow in the center (like the park stage light) ──
+  const glow = ctx.createRadialGradient(CW*0.5, CH*0.35, 0, CW*0.5, CH*0.35, CW*0.55);
+  glow.addColorStop(0,   'rgba(255,107,43,0.08)');
+  glow.addColorStop(0.5, 'rgba(255,71,133,0.04)');
+  glow.addColorStop(1,   'rgba(0,0,0,0)');
+  ctx.fillStyle = glow;
+  ctx.fillRect(0, 0, CW, CH);
+
+  // ── Twinkling stars ──
+  STARS.forEach(st => {
+    const alpha = 0.35 + 0.55 * (0.5 + 0.5 * Math.sin(t * 1.8 + st.a));
+    const r = st.r * scale * (0.85 + 0.3 * Math.sin(t * 2.4 + st.a));
+    ctx.beginPath();
+    ctx.arc(st.rx * CW, st.ry * CH, r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(255,251,239,${alpha})`;
+    ctx.fill();
+  });
+
+  // ── Soft ground plane: lighter warm bottom strip ──
+  const ground = ctx.createLinearGradient(0, CH * 0.75, 0, CH);
+  ground.addColorStop(0, 'rgba(255,107,43,0)');
+  ground.addColorStop(1, 'rgba(255,107,43,0.07)');
+  ctx.fillStyle = ground;
+  ctx.fillRect(0, CH * 0.75, CW, CH * 0.25);
+
+  // ── Dotted path grid (very subtle, warm not cold) ──
   const gM = 80 * scale;
-  ctx.strokeStyle = 'rgba(30,80,160,0.6)'; ctx.lineWidth = 1;
+  ctx.strokeStyle = 'rgba(255,107,43,0.08)'; ctx.lineWidth = 0.8;
   for (let x = 0; x <= CW; x += gM) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,CH); ctx.stroke(); }
   for (let y = 0; y <= CH; y += gM) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(CW,y); ctx.stroke(); }
 
-  // Minor grid
-  const gm = 20 * scale;
-  ctx.strokeStyle = 'rgba(20,55,120,0.28)'; ctx.lineWidth = 0.5;
-  for (let x = 0; x <= CW; x += gm) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,CH); ctx.stroke(); }
-  for (let y = 0; y <= CH; y += gm) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(CW,y); ctx.stroke(); }
+  // ── Festoon / fairy lights along the top ──
+  const ropeY = 28 * scale;
+  // Rope line
+  ctx.beginPath();
+  ctx.moveTo(0, ropeY);
+  ctx.lineTo(CW, ropeY);
+  ctx.strokeStyle = 'rgba(255,251,239,0.12)';
+  ctx.lineWidth = 1 * scale;
+  ctx.stroke();
 
-  // Corner crosshairs
-  const mk = 12 * scale;
-  ctx.strokeStyle = 'rgba(56,140,255,0.5)'; ctx.lineWidth = 1;
-  [[20*scale,20*scale],[CW-20*scale,20*scale],[20*scale,CH-20*scale],[CW-20*scale,CH-20*scale]].forEach(([cx,cy])=>{
-    ctx.beginPath();ctx.moveTo(cx-mk,cy);ctx.lineTo(cx+mk,cy);ctx.stroke();
-    ctx.beginPath();ctx.moveTo(cx,cy-mk);ctx.lineTo(cx,cy+mk);ctx.stroke();
+  FESTOONS.forEach(f => {
+    const lx = f.rx * CW;
+    const pulse = 0.6 + 0.4 * Math.sin(t * 2.2 + f.phase);
+    const bulbR = 4.5 * scale;
+
+    // Droop wire from rope
+    ctx.beginPath();
+    ctx.moveTo(lx, ropeY);
+    ctx.lineTo(lx, ropeY + 8 * scale);
+    ctx.strokeStyle = `rgba(255,251,239,0.10)`;
+    ctx.lineWidth = 0.6 * scale;
+    ctx.stroke();
+
+    // Glow halo
+    ctx.save();
+    ctx.shadowColor = f.col;
+    ctx.shadowBlur  = 14 * scale * pulse;
+    ctx.beginPath();
+    ctx.arc(lx, ropeY + 8 * scale + bulbR, bulbR, 0, Math.PI * 2);
+    ctx.fillStyle = f.col + Math.round(pulse * 200).toString(16).padStart(2,'0');
+    ctx.fill();
+    ctx.restore();
   });
 
-  // Scale bar
-  const sbX=CW-120*scale, sbY=CH-20*scale, sbW=80*scale;
-  ctx.strokeStyle='rgba(56,140,255,0.6)';ctx.lineWidth=1;
-  ctx.beginPath();ctx.moveTo(sbX,sbY);ctx.lineTo(sbX+sbW,sbY);ctx.stroke();
-  ctx.beginPath();ctx.moveTo(sbX,sbY-4*scale);ctx.lineTo(sbX,sbY+4*scale);ctx.stroke();
-  ctx.beginPath();ctx.moveTo(sbX+sbW,sbY-4*scale);ctx.lineTo(sbX+sbW,sbY+4*scale);ctx.stroke();
-  ctx.fillStyle='rgba(56,140,255,0.6)'; ctx.font=`${8*scale}px "Share Tech Mono"`;
-  ctx.textAlign='center'; ctx.textBaseline='alphabetic'; ctx.fillText('~400m', sbX+sbW/2, sbY-3*scale);
+  // ── Corner carnival flourish (decorative bracket) ──
+  const bk = 18 * scale;
+  const corners = [
+    [16*scale, 16*scale],
+    [CW-16*scale, 16*scale],
+    [16*scale, CH-16*scale],
+    [CW-16*scale, CH-16*scale],
+  ];
+  corners.forEach(([cx, cy], i) => {
+    const sx = i % 2 === 0 ? 1 : -1;
+    const sy = i < 2 ? 1 : -1;
+    ctx.strokeStyle = 'rgba(255,215,10,0.35)';
+    ctx.lineWidth   = 1.5 * scale;
+    ctx.lineCap     = 'round';
+    ctx.beginPath();
+    ctx.moveTo(cx, cy + sy * bk);
+    ctx.lineTo(cx, cy);
+    ctx.lineTo(cx + sx * bk, cy);
+    ctx.stroke();
+    // Small diamond dot at corner
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(Math.PI / 4);
+    ctx.fillStyle = 'rgba(255,215,10,0.5)';
+    const ds = 3.5 * scale;
+    ctx.fillRect(-ds/2, -ds/2, ds, ds);
+    ctx.restore();
+  });
 
-  // Compass (top-right)
-  const cpX=CW-38*scale, cpY=62*scale, cpR=20*scale;
-  ctx.strokeStyle='rgba(56,189,248,0.3)';ctx.lineWidth=1;
-  ctx.beginPath();ctx.arc(cpX,cpY,cpR,0,Math.PI*2);ctx.stroke();
-  ctx.fillStyle='rgba(56,189,248,0.12)';ctx.fill();
-  ctx.fillStyle='#38bdf8';ctx.font=`bold ${9*scale}px "Share Tech Mono"`;
-  ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('U',cpX,cpY-5*scale);
-  ctx.fillStyle='rgba(56,189,248,0.5)';ctx.font=`${8*scale}px "Share Tech Mono"`;
-  ctx.fillText('↑',cpX,cpY+5*scale);
+  // ── Park name watermark (bottom center) ──
+  ctx.save();
+  ctx.font        = `bold ${10*scale}px 'Nunito', sans-serif`;
+  ctx.textAlign   = 'center';
+  ctx.textBaseline = 'alphabetic';
+  ctx.fillStyle   = 'rgba(255,107,43,0.18)';
+  ctx.letterSpacing = `${3*scale}px`;
+  ctx.fillText('DUFAN · ANCOL · JAKARTA', CW / 2, CH - 10 * scale);
+  ctx.restore();
+
+  // ── Compass rose (top-right, carnival style) ──
+  const cpX = CW - 44 * scale, cpY = 72 * scale, cpR = 22 * scale;
+  // Outer ring
+  ctx.beginPath(); ctx.arc(cpX, cpY, cpR, 0, Math.PI * 2);
+  ctx.strokeStyle = 'rgba(255,215,10,0.25)'; ctx.lineWidth = 1.5 * scale; ctx.stroke();
+  ctx.fillStyle   = 'rgba(30,16,64,0.7)'; ctx.fill();
+  // Cardinal tick marks
+  for (let d = 0; d < 4; d++) {
+    const angle = d * Math.PI / 2 - Math.PI / 2;
+    ctx.beginPath();
+    ctx.moveTo(cpX + Math.cos(angle) * (cpR - 5*scale), cpY + Math.sin(angle) * (cpR - 5*scale));
+    ctx.lineTo(cpX + Math.cos(angle) * cpR, cpY + Math.sin(angle) * cpR);
+    ctx.strokeStyle = 'rgba(255,215,10,0.5)'; ctx.lineWidth = 1.2 * scale; ctx.stroke();
+  }
+  // "U" north label
+  ctx.fillStyle = '#FFD60A';
+  ctx.font      = `bold ${9*scale}px 'Nunito', sans-serif`;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText('U', cpX, cpY - 6 * scale);
+  // Arrow
+  ctx.fillStyle = '#FFD60A';
+  ctx.beginPath();
+  ctx.moveTo(cpX, cpY - cpR + 4*scale);
+  ctx.lineTo(cpX - 3*scale, cpY);
+  ctx.lineTo(cpX + 3*scale, cpY);
+  ctx.closePath(); ctx.fill();
+  // South half (muted)
+  ctx.fillStyle = 'rgba(255,255,255,0.15)';
+  ctx.beginPath();
+  ctx.moveTo(cpX, cpY + cpR - 4*scale);
+  ctx.lineTo(cpX - 3*scale, cpY);
+  ctx.lineTo(cpX + 3*scale, cpY);
+  ctx.closePath(); ctx.fill();
 }
 
-/* ── Connections ── */
+/* ── Connections (warm carnival path style) ── */
 function drawConns() {
-  ctx.setLineDash([3*scale, 4*scale]);
+  // Solid warm base
   CONNS.forEach(([a,b]) => {
-    ctx.strokeStyle='rgba(56,140,255,0.22)';
-    ctx.lineWidth=1.5*scale;
+    ctx.strokeStyle = 'rgba(255,107,43,0.13)';
+    ctx.lineWidth   = 2.5 * scale;
+    ctx.lineCap     = 'round';
+    ctx.setLineDash([]);
     ctx.beginPath();
-    ctx.moveTo(px(NODES[a]),py(NODES[a]));
-    ctx.lineTo(px(NODES[b]),py(NODES[b]));
+    ctx.moveTo(px(NODES[a]), py(NODES[a]));
+    ctx.lineTo(px(NODES[b]), py(NODES[b]));
+    ctx.stroke();
+  });
+  // Dashed overlay (cream white — like park path markings)
+  ctx.setLineDash([4*scale, 5*scale]);
+  CONNS.forEach(([a,b]) => {
+    ctx.strokeStyle = 'rgba(255,251,239,0.12)';
+    ctx.lineWidth   = 1 * scale;
+    ctx.beginPath();
+    ctx.moveTo(px(NODES[a]), py(NODES[a]));
+    ctx.lineTo(px(NODES[b]), py(NODES[b]));
     ctx.stroke();
   });
   ctx.setLineDash([]);
@@ -209,130 +357,153 @@ function rr(x,y,w,h,r){
   ctx.closePath();
 }
 
-/* ── Draw single node ── */
+/* ── Draw single node (Carnival Night theme) ── */
 const NR = 15; // base radius at MAP_W=1280
 function drawNode(node) {
+
+  // Junction dot — tiny warm diamond
   if (node.type === 'junc') {
-    ctx.beginPath(); ctx.arc(px(node),py(node), 3*scale, 0, Math.PI*2);
-    ctx.fillStyle='rgba(56,140,255,0.3)'; ctx.fill();
-    return;
-  }
-
-  const x=px(node), y=py(node), r=NR*scale;
-  const col = getNodeCol(node);
-  const q   = getQ(node);
-  const hasData = node.queueId !== null;
-  const running = isRunning(node);
-
-  if (node.type === 'entrance') {
-    const er = r * 1.2;
     ctx.save();
-    ctx.translate(x, y);
-    ctx.beginPath();
-    ctx.moveTo(0,-er);ctx.lineTo(er,0);ctx.lineTo(0,er);ctx.lineTo(-er,0);
-    ctx.closePath();
-    ctx.fillStyle='rgba(56,189,248,0.15)'; ctx.fill();
-    ctx.shadowColor='#38bdf8'; ctx.shadowBlur=14*scale;
-    ctx.strokeStyle='#38bdf8'; ctx.lineWidth=1.5*scale; ctx.stroke();
-    ctx.shadowBlur=0;
-    ctx.fillStyle='#38bdf8'; ctx.font=`bold ${7*scale}px "Share Tech Mono"`;
-    ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText('IN',0,0);
-    ctx.fillStyle='rgba(147,210,245,0.6)'; ctx.font=`${6.5*scale}px "Share Tech Mono"`;
-    ctx.fillText('ENTRANCE', 0, er+9*scale);
+    ctx.translate(px(node), py(node));
+    ctx.rotate(Math.PI / 4);
+    const ds = 3.5 * scale;
+    ctx.fillStyle = 'rgba(255,215,10,0.35)';
+    ctx.fillRect(-ds/2, -ds/2, ds, ds);
     ctx.restore();
     return;
   }
 
-  // ── RUNNING: animasi ring berputar ──
+  const x = px(node), y = py(node), r = NR * scale;
+  const col     = getNodeCol(node);
+  const q       = getQ(node);
+  const hasData = node.queueId !== null;
+  const running = isRunning(node);
+
+  // ── ENTRANCE: festive golden badge ──
+  if (node.type === 'entrance') {
+    const er = r * 1.3;
+    ctx.save();
+    ctx.translate(x, y);
+    // Outer glow ring
+    ctx.shadowColor = '#FFD60A'; ctx.shadowBlur = 22 * scale;
+    ctx.beginPath(); ctx.arc(0, 0, er, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(255,215,10,0.4)'; ctx.lineWidth = 1.5 * scale; ctx.stroke();
+    ctx.shadowBlur = 0;
+    // Body fill
+    const bg = ctx.createRadialGradient(0, -er*0.3, 0, 0, 0, er);
+    bg.addColorStop(0, 'rgba(255,215,10,0.25)');
+    bg.addColorStop(1, 'rgba(30,16,64,0.88)');
+    ctx.beginPath(); ctx.arc(0, 0, er, 0, Math.PI * 2);
+    ctx.fillStyle = bg; ctx.fill();
+    // Border
+    ctx.beginPath(); ctx.arc(0, 0, er, 0, Math.PI * 2);
+    ctx.strokeStyle = '#FFD60A'; ctx.lineWidth = 2 * scale; ctx.stroke();
+    // "IN" label
+    ctx.fillStyle = '#FFD60A';
+    ctx.font = `bold ${8*scale}px 'Fredoka One', cursive`;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('IN', 0, 0);
+    // "ENTRANCE" below
+    ctx.fillStyle = 'rgba(255,215,10,0.55)';
+    ctx.font = `${6.5*scale}px 'Nunito', sans-serif`;
+    ctx.fillText('ENTRANCE', 0, er + 9 * scale);
+    ctx.restore();
+    return;
+  }
+
+  // ── RUNNING: spinning ring (orange carnival) ──
   if (running) {
     const t   = (Date.now() / 1000) % (Math.PI * 2);
-    const rr2 = r * 1.65;
-    // Track bg
-    ctx.beginPath(); ctx.arc(x, y, rr2, 0, Math.PI*2);
-    ctx.strokeStyle = 'rgba(251,191,36,0.15)'; ctx.lineWidth = 2.5*scale; ctx.stroke();
-    // Arc berputar
+    const rr2 = r * 1.7;
+    ctx.beginPath(); ctx.arc(x, y, rr2, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(255,107,43,0.15)'; ctx.lineWidth = 3 * scale; ctx.stroke();
     ctx.save();
-    ctx.shadowColor = '#fbbf24'; ctx.shadowBlur = 10*scale;
+    ctx.shadowColor = '#FF6B2B'; ctx.shadowBlur = 14 * scale;
     ctx.beginPath();
-    ctx.arc(x, y, rr2, t, t + Math.PI * 1.2);
-    ctx.strokeStyle = '#fbbf24'; ctx.lineWidth = 2.5*scale;
+    ctx.arc(x, y, rr2, t, t + Math.PI * 1.3);
+    ctx.strokeStyle = '#FF6B2B'; ctx.lineWidth = 3 * scale;
     ctx.lineCap = 'round'; ctx.stroke();
     ctx.restore();
   }
 
-  // Outer glow
+  // ── Outer glow ──
   if (hasData && q > 0) {
     ctx.save();
-    ctx.shadowColor = col; ctx.shadowBlur = 18*scale;
-    ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2);
-    ctx.strokeStyle = col+'44'; ctx.lineWidth=1*scale; ctx.stroke();
+    ctx.shadowColor = col; ctx.shadowBlur = 22 * scale;
+    ctx.beginPath(); ctx.arc(x, y, r * 1.05, 0, Math.PI * 2);
+    ctx.strokeStyle = col + '55'; ctx.lineWidth = 1.5 * scale; ctx.stroke();
     ctx.restore();
   }
 
-  // Body gradient
-  const g = ctx.createRadialGradient(x,y-r*0.35,0,x,y,r);
-  g.addColorStop(0, col+'2e');
-  g.addColorStop(1, 'rgba(6,14,30,0.9)');
-  ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2);
-  ctx.fillStyle=g; ctx.fill();
+  // ── Body: radial gradient with warm dark center ──
+  const g = ctx.createRadialGradient(x, y - r*0.3, 0, x, y, r);
+  g.addColorStop(0,    col + '40');
+  g.addColorStop(0.65, col + '18');
+  g.addColorStop(1,    'rgba(30,16,64,0.92)');
+  ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2);
+  ctx.fillStyle = g; ctx.fill();
 
-  // Border
-  ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2);
-  ctx.strokeStyle = col; ctx.lineWidth = (hasData && q > 0) ? 2*scale : 1.5*scale;
+  // ── Inner highlight ring ──
+  ctx.beginPath(); ctx.arc(x, y - r*0.18, r * 0.55, Math.PI, Math.PI * 2);
+  ctx.strokeStyle = 'rgba(255,251,239,0.08)'; ctx.lineWidth = 1 * scale; ctx.stroke();
+
+  // ── Border ──
+  ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2);
+  ctx.strokeStyle = col;
+  ctx.lineWidth   = (hasData && q > 0) ? 2.5 * scale : 1.5 * scale;
   ctx.stroke();
 
-  // Count text inside
+  // ── Count text ──
   if (hasData) {
     ctx.save();
-    ctx.shadowColor=col; ctx.shadowBlur=8*scale;
-    ctx.fillStyle=col;
+    ctx.shadowColor = col; ctx.shadowBlur = 10 * scale;
+    ctx.fillStyle   = '#FFFBEF';
     const fs = q >= 100 ? 9*scale : 11*scale;
-    ctx.font=`bold ${fs}px "Orbitron"`;
-    ctx.textAlign='center'; ctx.textBaseline='middle';
-    ctx.fillText(q, x, y);
+    ctx.font = `bold ${fs}px 'Fredoka One', cursive`;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(q, x, y + scale * 0.5);
     ctx.restore();
   } else {
-    ctx.fillStyle='rgba(71,85,105,0.8)';
-    ctx.font=`${8*scale}px "Share Tech Mono"`;
-    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillStyle = 'rgba(139,115,85,0.7)';
+    ctx.font = `${8*scale}px 'Nunito', sans-serif`;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     ctx.fillText('—', x, y);
   }
 
-  // ── RUNNING: label "BERJALAN" kecil di atas node ──
+  // ── RUNNING: countdown pill above node ──
   if (running) {
     const secsLeft = getRunRemaining(node);
-    const m = Math.floor(secsLeft/60);
+    const m = Math.floor(secsLeft / 60);
     const s = secsLeft % 60;
     const label = m > 0 ? `▶ ${m}m ${String(s).padStart(2,'0')}s` : `▶ ${secsLeft}s`;
-    const fss = 6.5*scale;
-    ctx.font = `${fss}px "Share Tech Mono"`;
+    ctx.font = `bold ${6.5*scale}px 'Nunito', sans-serif`;
     const tw  = ctx.measureText(label).width;
-    const lW  = tw+10*scale, lH=11*scale;
-    const lX  = x - lW/2, lY = y - r - lH - 5*scale;
-    ctx.fillStyle='rgba(251,191,36,0.18)';
-    rr(lX,lY,lW,lH,2.5*scale); ctx.fill();
-    ctx.strokeStyle='rgba(251,191,36,0.6)'; ctx.lineWidth=0.8*scale;
-    rr(lX,lY,lW,lH,2.5*scale); ctx.stroke();
-    ctx.fillStyle='#fbbf24';
-    ctx.textAlign='center'; ctx.textBaseline='middle';
-    ctx.fillText(label, x, lY+lH/2);
+    const lW  = tw + 12 * scale, lH = 12 * scale;
+    const lX  = x - lW / 2, lY = y - r - lH - 6 * scale;
+    ctx.fillStyle = 'rgba(255,107,43,0.22)';
+    rr(lX, lY, lW, lH, 3 * scale); ctx.fill();
+    ctx.strokeStyle = 'rgba(255,107,43,0.7)'; ctx.lineWidth = 0.8 * scale;
+    rr(lX, lY, lW, lH, 3 * scale); ctx.stroke();
+    ctx.fillStyle = '#FF8F5E';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(label, x, lY + lH / 2);
   }
 
-  // Name label pill below node
+  // ── Name label pill below node ──
   const name = node.name;
-  const fs = 7*scale;
-  ctx.font=`${fs}px "Share Tech Mono"`;
-  const tw = ctx.measureText(name).width;
-  const lW=tw+10*scale, lH=12*scale, lX=x-lW/2, lY=y+r+4*scale;
-  // Pill bg
-  ctx.fillStyle='rgba(6,14,30,0.82)'; rr(lX,lY,lW,lH,2.5*scale); ctx.fill();
-  // Left accent stripe
-  ctx.fillStyle=col; rr(lX,lY,2.5*scale,lH,1.5*scale); ctx.fill();
-  // Name text
-  ctx.fillStyle = hasData ? '#cbd5e1' : '#475569';
-  ctx.font=`${fs}px "Share Tech Mono"`;
-  ctx.textAlign='center'; ctx.textBaseline='middle';
-  ctx.fillText(name, x+1.5*scale, lY+lH/2);
+  const fs2 = 7 * scale;
+  ctx.font = `600 ${fs2}px 'Nunito', sans-serif`;
+  const tw2 = ctx.measureText(name).width;
+  const lW2 = tw2 + 12 * scale, lH2 = 13 * scale;
+  const lX2 = x - lW2 / 2, lY2 = y + r + 4 * scale;
+  ctx.fillStyle = 'rgba(30,16,64,0.86)';
+  rr(lX2, lY2, lW2, lH2, 3 * scale); ctx.fill();
+  ctx.fillStyle = col;
+  rr(lX2, lY2, 3 * scale, lH2, 1.5 * scale); ctx.fill();
+  ctx.fillStyle = hasData ? '#FFFBEF' : '#8B7355';
+  ctx.font = `600 ${fs2}px 'Nunito', sans-serif`;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText(name, x + 2 * scale, lY2 + lH2 / 2);
 }
 
 function draw() {
@@ -346,9 +517,8 @@ let animFrameId = null;
 function startAnimLoop() {
   if (animFrameId) return;
   const loop = () => {
-    // Hanya redraw jika ada wahana yang sedang running
-    const anyRunning = NODES.some(n => isRunning(n));
-    if (anyRunning) draw();
+    // Selalu redraw karena background punya animasi (bintang, lampu festoon)
+    draw();
     animFrameId = requestAnimationFrame(loop);
   };
   animFrameId = requestAnimationFrame(loop);

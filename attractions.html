@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Wahana — DUFAN Ancol</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎢</text></svg>"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<link href="css/style.css" rel="stylesheet"/>
+<link href="css/attractions.css" rel="stylesheet"/>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar" id="navbar">
+  <a class="nav-brand" href="index.html">
+    <div class="nav-logo-icon">🎢</div>
+    <div class="nav-logo-text">DUFAN</div>
+  </a>
+  <div class="nav-links">    
+    <a class="nav-link" href="index.html">Beranda</a>
+    <a class="nav-link active" href="attractions.html">Wahana</a>
+    <a class="nav-link" href="tickets.html">Tiket & Harga</a>
+    <a class="nav-link" href="login.html">Peta Live</a>
+  </div>
+  <div class="nav-right">
+    <a href="login.html" class="nav-btn-ghost">Masuk</a>
+    <a href="tickets.html" class="nav-btn">🎟️ Beli Tiket</a>
+  </div>
+  <button class="nav-hamburger" id="hamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<div class="page">
+
+  <!-- ── PAGE HEADER ── -->
+  <header class="attr-header">
+    <div class="attr-header-bg"></div>
+    <div class="attr-header-inner">
+      <div class="sec-tag" style="background:rgba(255,255,255,.15);color:white">🎠 SEMUA WAHANA</div>
+      <h1 class="attr-header-title">Pilih Wahana<br><span class="highlight-text">Favoritmu!</span></h1>
+      <p class="attr-header-sub">32 wahana seru dari yang memacu adrenalin hingga petualangan anak-anak — semua ada di sini.</p>
+    </div>
+  </header>
+
+  <!-- ── FILTER & SEARCH BAR ── -->
+  <div class="attr-controls">
+    <div class="attr-search-wrap">
+      <span class="attr-search-icon">🔍</span>
+      <input type="text" id="searchInput" class="attr-search" placeholder="Cari wahana..."/>
+    </div>
+    <div class="attr-filters" id="filterBtns">
+      <button class="filter-btn active" data-filter="all">Semua <span class="filter-count" id="cnt-all">32</span></button>
+      <button class="filter-btn" data-filter="Dewasa">
+        <span class="filter-dot" style="background:#FF6B2B"></span>Dewasa
+        <span class="filter-count" id="cnt-dewasa"></span>
+      </button>
+      <button class="filter-btn" data-filter="Anak-Anak">
+        <span class="filter-dot" style="background:#00B4FF"></span>Anak-Anak
+        <span class="filter-count" id="cnt-anak"></span>
+      </button>
+      <button class="filter-btn" data-filter="Umum">
+        <span class="filter-dot" style="background:#22C55E"></span>Umum
+        <span class="filter-count" id="cnt-umum"></span>
+      </button>
+      <button class="filter-btn" data-filter="fasttrack">
+        ⚡ Fast Track
+        <span class="filter-count" id="cnt-ft"></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ── WAHANA GRID ── -->
+  <section class="attr-section">
+    <div class="wahana-grid" id="wahanaGrid"></div>
+    <div class="attr-empty" id="emptyState" style="display:none">
+      <div class="attr-empty-icon">🔍</div>
+      <div class="attr-empty-title">Wahana tidak ditemukan</div>
+      <div class="attr-empty-sub">Coba kata kunci lain atau ubah filter</div>
+    </div>
+  </section>
+
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-top">
+    <div class="footer-brand-col">
+      <div class="footer-logo">🎢 DUFAN</div>
+      <div class="footer-tagline">Taman Bermain<br>Terbesar Indonesia sejak 1985</div>
+      <div class="footer-info">
+        <div class="footer-info-item">📍 Jl. Lodan Timur No.7, Ancol, Jakarta Utara</div>
+        <div class="footer-info-item">🕗 Senin–Jumat: 10.00–18.00 WIB</div>
+        <div class="footer-info-item">🕗 Sabtu–Minggu: 10.00–20.00 WIB</div>
+      </div>
+    </div>
+    <div class="footer-links">
+      <div class="footer-col">
+        <div class="footer-col-title">Jelajahi</div>
+        <a href="attractions.html">🎢 Wahana Seru</a>
+        <a href="map.html">🗺️ Peta Taman</a>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Tiket</div>
+        <a href="tickets.html">🎟️ Beli Tiket Online</a>
+        <a href="tickets.html">⚡ Fast Track</a>
+        <a href="tickets.html">👨‍👩‍👧 Paket Keluarga</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-divider"></div>
+  <div class="footer-bottom">
+    <div class="footer-copy">© 2026 DUFAN · Tim Sayang Lomba Sayangg · All rights reserved</div>
+  </div>
+</footer>
+
+<script src="js/attractions.js"></script>
+</body>
+</html>

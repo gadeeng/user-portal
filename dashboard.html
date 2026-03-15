@@ -6,7 +6,7 @@
 <title>DUFAN — Dashboard</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎢</text></svg>"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
 <link href="css/dashboard.css" rel="stylesheet"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
@@ -47,24 +47,24 @@
 
   <!-- STATS -->
   <div class="stats-row">
-    <div class="stat-card" style="--stat-clr:var(--cyan)">
+    <div class="stat-card" style="--stat-clr:var(--orange)">
       <div class="stat-icon">🎟️</div>
       <div class="stat-num" id="s-total">0</div>
       <div class="stat-lbl">TOTAL TIKET</div>
     </div>
     <div class="stat-card" style="--stat-clr:var(--green)">
       <div class="stat-icon">✅</div>
-      <div class="stat-num" id="s-valid" style="color:var(--green);text-shadow:0 0 16px var(--green)">0</div>
+      <div class="stat-num" id="s-valid">0</div>
       <div class="stat-lbl">TIKET VALID</div>
     </div>
-    <div class="stat-card" style="--stat-clr:var(--gold2)">
+    <div class="stat-card" style="--stat-clr:var(--yellow)">
       <div class="stat-icon">⚡</div>
-      <div class="stat-num" id="s-ft" style="color:var(--gold2);text-shadow:0 0 16px var(--gold2)">0</div>
+      <div class="stat-num" id="s-ft">0</div>
       <div class="stat-lbl">FAST TRACK</div>
     </div>
-    <div class="stat-card" style="--stat-clr:#818cf8">
+    <div class="stat-card" style="--stat-clr:var(--purple)">
       <div class="stat-icon">📋</div>
-      <div class="stat-num" id="s-used" style="color:#818cf8;text-shadow:0 0 16px #818cf8">0</div>
+      <div class="stat-num" id="s-used">0</div>
       <div class="stat-lbl">TERPAKAI</div>
     </div>
   </div>
@@ -76,6 +76,25 @@
       <div class="section-sub">Semua tiket yang kamu miliki</div>
     </div>
     <button class="btn-primary" onclick="openBuyModal()">+ BELI TIKET</button>
+  </div>
+
+  <!-- TICKET HISTORY TABS -->
+  <div class="ticket-tabs" id="ticket-tabs">
+    <button class="tab-btn active" data-tab="semua" onclick="switchTab('semua')">
+      SEMUA <span class="tab-count" id="tab-count-semua">0</span>
+    </button>
+    <button class="tab-btn" data-tab="valid" onclick="switchTab('valid')">
+      ✅ VALID <span class="tab-count" id="tab-count-valid">0</span>
+    </button>
+    <button class="tab-btn" data-tab="used" onclick="switchTab('used')">
+      📌 TERPAKAI <span class="tab-count" id="tab-count-used">0</span>
+    </button>
+    <button class="tab-btn" data-tab="expired" onclick="switchTab('expired')">
+      ⏰ KADALUARSA <span class="tab-count" id="tab-count-expired">0</span>
+    </button>
+    <button class="tab-btn" data-tab="fasttrack" onclick="switchTab('fasttrack')">
+      ⚡ FAST TRACK <span class="tab-count" id="tab-count-fasttrack">0</span>
+    </button>
   </div>
 
   <div class="ticket-grid" id="ticket-grid">

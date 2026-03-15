@@ -1,0 +1,263 @@
+/* ══════════════════════════════════════
+   DUFAN — Attractions Page
+   attractions.css
+══════════════════════════════════════ */
+
+/* ── Page Header ── */
+.attr-header {
+  position: relative;
+  padding: 140px 48px 80px;
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--dark) 0%, var(--dark2) 100%);
+  text-align: center;
+}
+.attr-header-bg {
+  position: absolute; inset: 0; pointer-events: none;
+  background-image: radial-gradient(rgba(255,107,43,.06) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+.attr-header-bg::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 70% 60% at 50% 80%, rgba(255,107,43,.12), transparent);
+}
+.attr-header-inner {
+  position: relative; z-index: 1;
+  max-width: 640px; margin: 0 auto;
+}
+.attr-header-title {
+  font-family: 'Fredoka One', cursive;
+  font-size: clamp(36px, 6vw, 64px);
+  color: white; line-height: 1.1;
+  margin: 16px 0 16px;
+}
+.attr-header-sub {
+  font-size: 16px; color: rgba(255,255,255,.55);
+  line-height: 1.7;
+}
+
+/* Wave below header */
+.attr-header::after {
+  content: '';
+  position: absolute; bottom: -2px; left: 0; right: 0; height: 60px;
+  background: var(--cream);
+  clip-path: ellipse(55% 100% at 50% 100%);
+}
+
+/* ── Controls Bar ── */
+.attr-controls {
+  position: sticky; top: 68px; z-index: 100;
+  background: rgba(255,251,239,.96);
+  backdrop-filter: blur(20px);
+  border-bottom: 1.5px solid rgba(255,107,43,.1);
+  padding: 16px 48px;
+  display: flex; align-items: center;
+  gap: 16px; flex-wrap: wrap;
+  box-shadow: 0 4px 20px rgba(30,16,64,.07);
+}
+
+.attr-search-wrap {
+  position: relative; flex-shrink: 0;
+}
+.attr-search-icon {
+  position: absolute; left: 14px; top: 50%;
+  transform: translateY(-50%);
+  font-size: 16px; pointer-events: none;
+}
+.attr-search {
+  padding: 10px 16px 10px 42px;
+  width: 240px;
+  background: white;
+  border: 1.5px solid rgba(255,107,43,.2);
+  border-radius: 50px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px; font-weight: 600;
+  color: var(--dark);
+  outline: none;
+  transition: border-color .2s, box-shadow .2s;
+}
+.attr-search:focus {
+  border-color: var(--orange);
+  box-shadow: 0 0 0 3px rgba(255,107,43,.12);
+}
+.attr-search::placeholder { color: var(--muted); }
+
+.attr-filters {
+  display: flex; align-items: center;
+  gap: 8px; flex-wrap: wrap;
+}
+
+.filter-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 16px;
+  background: white;
+  border: 1.5px solid rgba(30,16,64,.1);
+  border-radius: 50px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 13px; font-weight: 700;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all .22s;
+}
+.filter-btn:hover {
+  border-color: var(--orange);
+  color: var(--orange);
+  background: rgba(255,107,43,.05);
+}
+.filter-btn.active {
+  background: linear-gradient(135deg, var(--orange), var(--pink));
+  border-color: transparent;
+  color: white;
+  box-shadow: 0 3px 14px rgba(255,107,43,.3);
+}
+.filter-count {
+  font-size: 11px; font-weight: 800;
+  background: rgba(255,255,255,.25);
+  padding: 1px 7px; border-radius: 50px;
+  min-width: 22px; text-align: center;
+}
+.filter-btn:not(.active) .filter-count {
+  background: rgba(30,16,64,.06);
+  color: var(--dark);
+}
+.filter-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ── Grid ── */
+.attr-section { padding: 48px 48px 80px; background: var(--cream); }
+
+.wahana-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+  max-width: 1200px; margin: 0 auto;
+}
+
+/* ── Wahana Card ── */
+.wcard {
+  background: white;
+  border-radius: 22px;
+  padding: 24px 22px 20px;
+  border: 1.5px solid rgba(30,16,64,.07);
+  box-shadow: 0 4px 20px rgba(30,16,64,.07);
+  display: flex; flex-direction: column; gap: 14px;
+  transition: transform .3s cubic-bezier(.34,1.2,.64,1), box-shadow .3s;
+  position: relative; overflow: hidden;
+}
+.wcard::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 4px;
+  background: linear-gradient(90deg, var(--wc), color-mix(in srgb, var(--wc) 60%, white));
+  border-radius: 22px 22px 0 0;
+}
+.wcard:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 48px rgba(30,16,64,.13);
+}
+
+/* Card enter animation */
+.wcard-enter {
+  animation: cardIn .45s cubic-bezier(.34,1.2,.64,1) both;
+}
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(20px) scale(.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.wcard-top {
+  display: flex; align-items: flex-start;
+  justify-content: space-between; gap: 12px;
+}
+.wcard-emoji {
+  font-size: 44px;
+  line-height: 1;
+  filter: drop-shadow(0 3px 8px rgba(0,0,0,.1));
+  transition: transform .35s cubic-bezier(.34,1.56,.64,1);
+}
+.wcard:hover .wcard-emoji { transform: scale(1.15) rotate(-6deg); }
+
+.wcard-badges {
+  display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-end;
+}
+.wcard-badge {
+  padding: 3px 10px; border-radius: 50px;
+  font-family: 'Space Mono', monospace;
+  font-size: 10px; font-weight: 700;
+  letter-spacing: .5px; white-space: nowrap;
+}
+.wcard-badge--ft {
+  background: rgba(255,214,10,.15);
+  color: #B89200;
+}
+.wcard-badge--walk {
+  background: rgba(155,93,229,.1);
+  color: #7A3DB8;
+}
+
+.wcard-name {
+  font-family: 'Fredoka One', cursive;
+  font-size: 20px; color: var(--dark);
+  line-height: 1.2;
+}
+
+/* Meta info grid */
+.wcard-meta {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 8px 12px;
+}
+.wcard-meta-item {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 600; color: var(--muted);
+}
+.wcard-meta-icon { font-size: 13px; flex-shrink: 0; }
+
+/* CTA */
+.wcard-cta {
+  display: block; width: 100%;
+  padding: 11px;
+  background: linear-gradient(135deg, var(--wc), color-mix(in srgb, var(--wc) 70%, var(--pink)));
+  color: white; border-radius: 12px;
+  font-family: 'Nunito', sans-serif; font-weight: 800;
+  font-size: 14px; text-align: center;
+  text-decoration: none;
+  margin-top: auto;
+  transition: all .25s;
+  box-shadow: 0 3px 14px rgba(0,0,0,.12);
+}
+.wcard-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 7px 22px rgba(0,0,0,.18);
+}
+
+/* ── Empty state ── */
+.attr-empty {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 80px 24px;
+  gap: 12px;
+  text-align: center;
+}
+.attr-empty-icon { font-size: 56px; }
+.attr-empty-title {
+  font-family: 'Fredoka One', cursive;
+  font-size: 24px; color: var(--dark);
+}
+.attr-empty-sub { font-size: 14px; color: var(--muted); }
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .attr-header { padding: 110px 24px 70px; }
+  .attr-controls { padding: 12px 20px; top: 68px; gap: 10px; }
+  .attr-search { width: 100%; }
+  .attr-search-wrap { width: 100%; }
+  .attr-section { padding: 32px 20px 60px; }
+  .wahana-grid { grid-template-columns: 1fr 1fr; gap: 14px; }
+  .wcard { padding: 18px 16px 16px; }
+  .wcard-emoji { font-size: 36px; }
+  .wcard-name { font-size: 17px; }
+}
+@media (max-width: 480px) {
+  .wahana-grid { grid-template-columns: 1fr; }
+}

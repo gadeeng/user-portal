@@ -6,182 +6,243 @@
 <title>DUFAN — Dunia Fantasi Ancol</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎢</text></svg>"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
 <link href="css/style.css" rel="stylesheet"/>
-<link href="css/map.css" rel="stylesheet"/>
 </head>
 <body>
 
 <canvas id="bg-canvas"></canvas>
-<div class="noise"></div>
-<div class="scanlines"></div>
 
 <!-- NAVBAR -->
-<nav class="navbar">
-  <div class="nav-brand">
-    <div class="nav-dot"></div>
-    <div class="nav-logo">DUFAN</div>
-  </div>
+<nav class="navbar" id="navbar">
+  <a class="nav-brand" href="#">
+    <div class="nav-logo-icon">🎢</div>
+    <div class="nav-logo-text">DUFAN</div>
+  </a>
+
   <div class="nav-links">
-    <a class="nav-link" href="#fitur">FITUR</a>
-    <a class="nav-link" href="#paket">PAKET</a>
-    <a href="login.html" class="nav-btn">MASUK</a>
+    <a class="nav-link" href="index.html">Beranda</a>
+    <a class="nav-link" href="attractions.html">Wahana</a>
+    <a class="nav-link" href="tickets.html">Tiket & Harga</a>
+    <a class="nav-link" href="map.html">Peta Live</a>
+    <a class="nav-link" href="#galeri">Galeri</a>
   </div>
+
+  <div class="nav-right">
+    <a href="login.html" class="nav-btn-ghost">Masuk</a>
+    <a href="tickets.html" class="nav-btn">🎟️ Beli Tiket</a>
+  </div>
+
+  <button class="nav-hamburger" id="hamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
 
 <div class="page">
 
   <!-- ═══════════ HERO ═══════════ -->
   <section class="s-hero" id="hero">
-    <div class="hero-eyebrow">// PORTAL RESMI PENGUNJUNG — ANCOL · JAKARTA</div>
-    <div class="hero-logo-wrap">
-      <div class="hero-icon">🎢</div>
+    <canvas id="hero-canvas"></canvas>
+
+    <div class="hero-title" id="heroTitle">
+      <span class="hero-word" data-word="Petualangan"></span><br>
+      <span class="hero-word hero-word--accent" data-word="Tak Terlupakan"></span><br>
+      <span class="hero-word" data-word="Menanti!"></span>
     </div>
-    <div class="hero-title">DUFAN</div>
-    <div class="hero-tagline">
-      Masuk ke dunia hiburan terbesar Indonesia.<br>
-      <em>Rute personal. Antrian cerdas. Momen tak terlupakan.</em>
-    </div>
+
     <div class="hero-cta-row">
-      <a href="login.html" class="btn-cta">🎟️ &nbsp;BELI TIKET SEKARANG</a>
-      <a href="login.html" class="btn-cta-outline">SUDAH PUNYA AKUN →</a>
+      <a href="login.html" class="btn-primary confetti-btn">🎟️ Beli Tiket Sekarang</a>
+      <a href="#wahana" class="btn-secondary">Jelajahi Wahana →</a>
     </div>
-    <div class="hero-scroll" onclick="document.getElementById('fitur').scrollIntoView({behavior:'smooth'})">
-      <span>SCROLL</span>
-      <div class="hero-scroll-line"></div>
-    </div>
+
+    <!-- HERO TILES -->
+    <div class="hero-tiles">
+
+      <a class="htile" href="attractions.html">
+        <div class="htile-photo htile-photo--attractions"></div>
+        <div class="htile-overlay" style="--ov1:#CC3D00;--ov2:#FF6B2B"></div>
+        <div class="htile-content">
+          <div class="htile-icon">
+            <svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M4 40 C10 40 13 24 20 22 C25 20 27 30 32 26 C37 22 40 14 47 10 C50 8 52 11 52 14" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M4 44 L52 44" stroke="white" stroke-width="3" stroke-linecap="round"/>
+              <circle cx="12" cy="44" r="4.5" fill="white"/>
+              <circle cx="12" cy="44" r="2" fill="#FF6B2B"/>
+              <circle cx="28" cy="44" r="4.5" fill="white"/>
+              <circle cx="28" cy="44" r="2" fill="#FF6B2B"/>
+              <rect x="18" y="16" width="14" height="10" rx="3" fill="white" opacity="0.9"/>
+              <circle cx="22" cy="12" r="3" fill="white" opacity="0.7"/>
+              <circle cx="28" cy="11" r="3" fill="white" opacity="0.7"/>
+            </svg>
+          </div>
+          <div class="htile-label">EKSPLORASI</div>
+          <div class="htile-title">Wahana</div>
+        </div>
+      </a>
+
+      <a class="htile" href="tickets.html">
+        <div class="htile-photo htile-photo--tickets"></div>
+        <div class="htile-overlay" style="--ov1:#B89200;--ov2:#FFD60A"></div>
+        <div class="htile-content">
+          <div class="htile-icon">
+            <svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="4" y="16" width="48" height="24" rx="5" stroke="white" stroke-width="3" fill="none"/>
+              <path d="M20 16 L20 40" stroke="white" stroke-width="2.5" stroke-dasharray="4 3"/>
+              <path d="M4 22 Q0 28 4 34" stroke="white" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+              <path d="M52 22 Q56 28 52 34" stroke="white" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+              <circle cx="35" cy="25" r="2.5" fill="white"/>
+              <circle cx="35" cy="31" r="2.5" fill="white"/>
+              <circle cx="41" cy="28" r="2.5" fill="white"/>
+            </svg>
+          </div>
+          <div class="htile-label">PEMBELIAN</div>
+          <div class="htile-title">Tiket</div>
+        </div>
+      </a>
+
+      <a class="htile" href="login.html">
+        <div class="htile-photo htile-photo--map"></div>
+        <div class="htile-overlay" style="--ov1:#005F99;--ov2:#00B4FF"></div>
+        <div class="htile-content">
+          <div class="htile-icon">
+            <svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M28 6 C19 6 12 13 12 22 C12 34 28 50 28 50 C28 50 44 34 44 22 C44 13 37 6 28 6Z" fill="white" opacity="0.92"/>
+              <circle cx="28" cy="22" r="6" fill="#00B4FF"/>
+              <ellipse cx="28" cy="51" rx="8" ry="3" fill="white" opacity="0.25"/>
+            </svg>
+          </div>
+          <div class="htile-label">NAVIGASI</div>
+          <div class="htile-title">Live Map</div>
+        </div>
+      </a>
+
+    </div><!-- /hero-tiles -->
+
   </section>
 
-  <!-- STATS BAR -->
-  <div class="stats-bar reveal">
-    <div class="stat-item">
-      <div class="stat-n">27+</div>
-      <div class="stat-l">WAHANA SERU</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-n">2 Juta+</div>
-      <div class="stat-l">PENGUNJUNG / TAHUN</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-n">40 Th</div>
-      <div class="stat-l">BERDIRI SEJAK 1985</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-n">5 ⭐</div>
-      <div class="stat-l">RATING PENGUNJUNG</div>
-    </div>
+  <!-- WAVE: cream → dark -->
+  <div class="wave-divider wave-divider--hero-to-gallery">
+    <svg viewBox="0 0 1440 120" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="1440" height="120" fill="#FFFBEF"/>
+      <path d="M0,60 C180,110 360,20 540,70 C720,120 900,10 1080,60 C1260,110 1380,40 1440,55 L1440,120 L0,120 Z" fill="#1E1040"/>
+      <path d="M0,75 C200,120 400,30 600,80 C800,130 1000,20 1200,72 C1320,102 1400,55 1440,68 L1440,120 L0,120 Z" fill="#1E1040" opacity=".6"/>
+    </svg>
   </div>
 
-  <!-- ═══════════ FITUR ═══════════ -->
-  <section class="s-features" id="fitur">
-    <div class="sec-eye reveal">// KENAPA DUFAN?</div>
-    <div class="sec-title reveal">Teknologi untuk Pengalaman Terbaik</div>
-    <div class="sec-sub reveal">Sistem tiket digital generasi baru yang membuat kunjunganmu lebih seru dan efisien</div>
+  <!-- ═══════════ PHOTO SHOWCASE ═══════════ -->
+  <section class="s-gallery" id="galeri">
 
-    <div class="features-grid">
-      <div class="feat-card reveal" style="--fc:var(--cyan)">
-        <div class="feat-card-icon">🗺️</div>
-        <div class="feat-card-title">Peta Live Realtime</div>
-        <div class="feat-card-desc">Pantau status antrian semua wahana secara langsung. Tidak perlu keliling dulu hanya untuk tahu antrian panjang.</div>
-        <div class="feat-card-tag">REALTIME</div>
-      </div>
-      <div class="feat-card reveal" style="--fc:var(--green)">
-        <div class="feat-card-icon">🎟️</div>
-        <div class="feat-card-title">Tiket Digital</div>
-        <div class="feat-card-desc">Beli tiket langsung dari smartphone, tidak perlu antre di loket. Scan QR code di pintu masuk wahana.</div>
-        <div class="feat-card-tag">PAPERLESS</div>
-      </div>
-      <div class="feat-card reveal" style="--fc:var(--cyan2)">
-        <div class="feat-card-icon">📊</div>
-        <div class="feat-card-title">Dashboard Pengunjung</div>
-        <div class="feat-card-desc">Lihat riwayat tiket, status kunjungan, dan kelola semua tiketmu dalam satu tampilan yang bersih.</div>
-        <div class="feat-card-tag">ALL-IN-ONE</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ═══════════ PAKET HARGA ═══════════ -->
-  <section class="s-pricing" id="paket">
-    <div class="sec-eye reveal">// PILIH PAKETMU</div>
-    <div class="sec-title reveal">Harga Transparan, Tanpa Biaya Tersembunyi</div>
-    <div class="sec-sub reveal">Dari solo traveler hingga rombongan keluarga besar, kami punya paket untuk semua</div>
-
-    <div class="pricing-grid">
-      <!-- SOLO -->
-      <div class="pkg-card reveal" style="--pc:#bbe70e">
-        <div class="pkg-em">🧍</div>
-        <div class="pkg-name">SOLO</div>
-        <div class="pkg-desc">Sempurna untuk kamu yang datang sendiri. Nikmati semua wahana dengan antrian reguler.</div>
-        <div class="pkg-price-wrap">
-          <div class="pkg-price">Rp 250.000</div>
-          <div class="pkg-price-unit">PER TIKET · 1 DEWASA</div>
-        </div>
-        <div class="pkg-divider"></div>
-        <div class="pkg-feats">
-          <div class="pkg-feat"><div class="pkg-feat-dot">✓</div>1 tiket masuk dewasa</div>
-          <div class="pkg-feat"><div class="pkg-feat-dot">✓</div>Akses semua 27 wahana</div>
-          <div class="pkg-feat"><div class="pkg-feat-dot">✓</div>QR code digital</div>
-          <div class="pkg-feat"><div class="pkg-feat-dot">✓</div>Antrian reguler</div>
-        </div>
-        <button class="pkg-cta-outline" onclick="location.href='login.html'">PILIH PAKET</button>
-      </div>
-
-      <!-- GROUP PRIORITY (featured) -->
-      <div class="pkg-card featured reveal" style="--pc:var(--cyan)">
-        <div class="pkg-badge">TERPOPULER</div>
-        <div class="pkg-em">👫⚡</div>
-        <div class="pkg-name">GROUP PRIORITY</div>
-        <div class="pkg-desc">Datang ramai-ramai dengan jalur fast track. Hemat waktu, maksimal keseruan!</div>
-        <div class="pkg-price-wrap">
-          <div class="pkg-price">Rp 600.000</div>
-          <div class="pkg-price-unit">PER ORANG · MIN. 2 DEWASA</div>
-        </div>
-        <div class="pkg-divider"></div>
-        <div class="pkg-feats">
-          <div class="pkg-feat"><div class="pkg-feat-dot">✓</div>2–10 tiket dewasa</div>
-          <div class="pkg-feat"><div class="pkg-feat-dot">✓</div>Akses semua 27 wahana</div>
-          <div class="pkg-feat"><div class="pkg-feat-dot">✓</div>⚡ Fast track semua wahana</div>
-          <div class="pkg-feat"><div class="pkg-feat-dot">✓</div>QR code digital per orang</div>
-          <div class="pkg-feat"><div class="pkg-feat-dot">✓</div>Jalur prioritas tanpa antre panjang</div>
-        </div>
-        <button class="pkg-cta" onclick="location.href='login.html'">PILIH PAKET</button>
-      </div>
-
-      <!-- FAMILY -->
-      <div class="pkg-card reveal" style="--pc:#38bdf8">
-        <div class="pkg-em">👨‍👩‍👧</div>
-        <div class="pkg-name">FAMILY</div>
-        <div class="pkg-desc">Paket lengkap untuk seluruh keluarga. Anak-anak boleh ikut dengan akses wahana khusus mereka.</div>
-        <div class="pkg-price-wrap">
-          <div class="pkg-price">Rp 200.000</div>
-          <div class="pkg-price-unit">PER ORANG · DEWASA + ANAK</div>
-        </div>
-        <div class="pkg-divider"></div>
-        <div class="pkg-feats">
-          <div class="pkg-feat"><div class="pkg-feat-dot">✓</div>1–4 dewasa + anak-anak</div>
-          <div class="pkg-feat"><div class="pkg-feat-dot">✓</div>Akses wahana anak & dewasa</div>
-          <div class="pkg-feat"><div class="pkg-feat-dot">✓</div>Filter wahana by tinggi badan</div>
-          <div class="pkg-feat"><div class="pkg-feat-dot">✓</div>QR code digital per orang</div>
-        </div>
-        <button class="pkg-cta-outline" onclick="location.href='login.html'">PILIH PAKET</button>
-      </div>
+    <div class="gallery-header reveal">
+      <div class="sec-tag">📸 LIHAT SENDIRI</div>
+      <div class="sec-title">Satu Taman.<br><span class="highlight-text">Ribuan Momen Seru!</span></div>
+      <div class="sec-sub">Dari wahana memacu adrenalin hingga satwa eksotis — DUFAN selalu punya cerita baru untuk kamu.</div>
     </div>
 
-    <div class="pricing-note reveal">* Harga belum termasuk pajak · Tiket berlaku 1 hari kunjungan · Harga dapat berubah sewaktu-waktu</div>
+    <div class="gallery-bento">
+
+      <!-- BIG FEATURE — Halilintar -->
+      <div class="gitem gitem--big reveal" style="--gc1:#CC3D00;--gc2:#FF8F5E">
+        <div class="gitem-photo gitem-photo--halilintar"></div>
+        <div class="gitem-overlay"></div>
+        <div class="gitem-content">
+          <div class="gitem-tag">🎢 UNGGULAN</div>
+          <div class="gitem-name">Halilintar</div>
+          <div class="gitem-desc">Roller coaster legendaris tertinggi & tercepat di Indonesia. Kecepatan 90 km/jam!</div>
+        </div>
+      </div>
+
+      <!-- Arung Jeram -->
+      <div class="gitem gitem--tall reveal" style="--gc1:#005FA3;--gc2:#00B4FF">
+        <div class="gitem-photo gitem-photo--arung"></div>
+        <div class="gitem-overlay"></div>
+        <div class="gitem-content">
+          <div class="gitem-tag">💦 AIR</div>
+          <div class="gitem-name">Arung Jeram</div>
+          <div class="gitem-desc">Siap-siap basah kuyup!</div>
+        </div>
+      </div>
+
+      <!-- Bianglala -->
+      <div class="gitem gitem--med reveal" style="--gc1:#B89200;--gc2:#FFD60A">
+        <div class="gitem-photo gitem-photo--bianglala"></div>
+        <div class="gitem-overlay"></div>
+        <div class="gitem-content">
+          <div class="gitem-tag">🎡 IKONIK</div>
+          <div class="gitem-name">Bianglala Raksasa</div>
+        </div>
+      </div>
+
+      <!-- Tornado -->
+      <div class="gitem gitem--med reveal" style="--gc1:#166534;--gc2:#22C55E">
+        <div class="gitem-photo gitem-photo--zoo"></div>
+        <div class="gitem-overlay"></div>
+        <div class="gitem-content">
+          <div class="gitem-tag">🌪️ UNGGULAN</div>
+          <div class="gitem-name">Tornado</div>
+        </div>
+      </div>
+
+      <!-- Istana Boneka -->
+      <div class="gitem gitem--wide reveal" style="--gc1:#7A1FA0;--gc2:#C97BE8">
+        <div class="gitem-photo gitem-photo--istana"></div>
+        <div class="gitem-overlay"></div>
+        <div class="gitem-content">
+          <div class="gitem-tag">🪆 KLASIK</div>
+          <div class="gitem-name">Istana Boneka</div>
+          <div class="gitem-desc">Wahana legendaris sejak 1985 — kenangan lintas generasi!</div>
+        </div>
+      </div>
+
+      <!-- Kicir-Kicir -->
+      <div class="gitem gitem--sm reveal" style="--gc1:#A0291F;--gc2:#FF4785">
+        <div class="gitem-photo gitem-photo--kicir"></div>
+        <div class="gitem-overlay"></div>
+        <div class="gitem-content">
+          <div class="gitem-tag">🌀</div>
+          <div class="gitem-name">Kicir-Kicir</div>
+        </div>
+      </div>
+
+      <!-- Bom-Bom Car -->
+      <div class="gitem gitem--sm reveal" style="--gc1:#004D3B;--gc2:#00B4A0">
+        <div class="gitem-photo gitem-photo--bombom"></div>
+        <div class="gitem-overlay"></div>
+        <div class="gitem-content">
+          <div class="gitem-tag">💥</div>
+          <div class="gitem-name">Bom-Bom Car</div>
+        </div>
+      </div>
+
+    </div><!-- /gallery-bento -->
+
+    <div class="gallery-footer reveal">
+      <span>+28 wahana lainnya menunggumu</span>
+      <a href="attractions.html" class="gallery-more-btn">Lihat Semua Wahana →</a>
+    </div>
+
   </section>
+
+  <!-- WAVE: dark → cta warm -->
+  <div class="wave-divider wave-divider--gallery-to-cta">
+    <svg viewBox="0 0 1440 120" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="1440" height="120" fill="#1E1040"/>
+      <path d="M0,55 C200,10 400,100 600,50 C800,0 1000,90 1200,45 C1340,15 1400,70 1440,60 L1440,120 L0,120 Z" fill="#FFF8E8"/>
+      <path d="M0,68 C180,30 380,110 580,62 C780,14 980,100 1180,56 C1320,26 1400,80 1440,72 L1440,120 L0,120 Z" fill="#FFF8E8" opacity=".55"/>
+    </svg>
+  </div>
 
   <!-- ═══════════ CTA ═══════════ -->
   <section class="s-cta" id="mulai">
-    <div class="cta-glow"></div>
+    <div class="cta-deco1">🎊</div>
+    <div class="cta-deco2">🎡</div>
     <div class="cta-inner reveal">
-      <div class="cta-eye">// SIAP BERPETUALANG?</div>
-      <div class="cta-title">Satu Tiket.<br>Ribuan Momen.</div>
-      <div class="cta-sub">Bergabung dengan jutaan pengunjung yang sudah merasakan serunya Dunia Fantasi Ancol. Buat akun gratis dan pesan tiketmu sekarang.</div>
+      <div class="cta-badge">🎟️ SIAP BERANGKAT?</div>
+      <div class="cta-title">Satu Hari.<br>Sejuta Kenangan!</div>
+      <div class="cta-sub">Bergabung bersama jutaan pengunjung yang sudah merasakan serunya DUFAN Ancol. Buat akun gratis dan pesan tiketmu sekarang — mudah, cepat, langsung aktif!</div>
       <div class="cta-btns">
-        <a href="login.html" class="btn-cta">🎟️ &nbsp;BELI TIKET SEKARANG</a>
-        <a href="login.html" class="btn-cta-outline">SUDAH PUNYA AKUN →</a>
+        <a href="login.html" class="btn-primary btn-lg confetti-btn">🎟️ Beli Tiket Sekarang</a>
+        <a href="login.html" class="btn-secondary btn-lg">Sudah Punya Akun →</a>
       </div>
-      <div class="cta-note">Gratis daftar · Tiket langsung aktif · Tanpa biaya tambahan</div>
     </div>
   </section>
 
@@ -189,14 +250,66 @@
 
 <!-- FOOTER -->
 <footer class="footer">
-  <div class="footer-brand">🎢 DUFAN ANCOL</div>
-  <div class="footer-copy">© 2026 DUFAN ANCOL · Tim Sayang Lomba Sayangg</div>
+
+  <div class="footer-top">
+
+    <!-- Brand col -->
+    <div class="footer-brand-col">
+      <div class="footer-logo">🎢 DUFAN</div>
+      <div class="footer-tagline">Taman Bermain<br>Terbesar Indonesia sejak 1985</div>
+      <div class="footer-info">
+        <div class="footer-info-item">📍 Jl. Lodan Timur No.7, Ancol, Jakarta Utara</div>
+        <div class="footer-info-item">🕗 Senin–Jumat: 10.00–18.00 WIB</div>
+        <div class="footer-info-item">🕗 Sabtu–Minggu: 10.00–20.00 WIB</div>
+      </div>
+    </div>
+
+    <!-- Links -->
+    <div class="footer-links">
+
+      <div class="footer-col">
+        <div class="footer-col-title">Jelajahi</div>
+        <a href="attractions.html">🎢 Wahana Seru</a>
+        <a href="attractions.html">🎭 Pertunjukan Live</a>
+        <a href="map.html">🗺️ Peta Taman</a>
+      </div>
+
+      <div class="footer-col">
+        <div class="footer-col-title">Tiket</div>
+        <a href="tickets.html">🎟️ Beli Tiket Online</a>
+        <a href="tickets.html">👶 Tiket Grup</a>
+        <a href="tickets.html">⚡ Fast Track</a>
+        <a href="tickets.html">👨‍👩‍👧 Paket Keluarga</a>
+      </div>
+
+      <div class="footer-col">
+        <div class="footer-col-title">Informasi</div>
+        <a href="tickets.html">❓ FAQ</a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Divider -->
+  <div class="footer-divider"></div>
+
+  <!-- Bottom bar -->
+  <div class="footer-bottom">
+    <div class="footer-copy">© 2026 DUFAN · Tim Sayang Lomba Sayangg · All rights reserved</div>
+    <div class="footer-socials">
+      <a href="https://www.instagram.com/infodufan/" class="footer-social-btn" aria-label="Instagram">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+      </a>
+      <a href="https://www.tiktok.com/@dufanancol" class="footer-social-btn" aria-label="TikTok">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.28 6.28 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.19 8.19 0 0 0 4.79 1.53V6.78a4.85 4.85 0 0 1-1.02-.09z"/></svg>
+      </a>
+    </div>
+  </div>
+
 </footer>
 
-<!-- BG CANVAS -->
-<script src="js/script.js"> </script>
-
-<!-- SCROLL REVEAL -->
+<script src="js/script.js"></script>
+<script src="js/hero-scene.js"></script>
 <script src="js/observer.js"></script>
 </body>
 </html>
