@@ -509,12 +509,6 @@ function _injectHTML() {
         </div>
       </div>
 
-      <!-- Breakdown formula -->
-      <div class="rek-formula-wrap" id="rek-formula-wrap">
-        <div class="rek-formula-title">📐 BREAKDOWN PWT</div>
-        <pre id="rek-formula" class="rek-formula">—</pre>
-      </div>
-
       <!-- Alasan routing -->
       <div id="rek-reason" class="rek-reason">—</div>
 
