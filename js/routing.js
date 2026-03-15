@@ -38,7 +38,7 @@ export const PAKET_TO_VISITOR = {
 
 /* ══════════════════════════════════════════════════════
    2. DEFINISI ZONA (integer 1-4, searah jarum jam)
-   Sumber: agent.js baris 182 → this.currentZone = Math.floor(Math.random() * 4) + 1
+   Sumber: this.currentZone = Math.floor(Math.random() * 4) + 1
 ══════════════════════════════════════════════════════ */
 
 export const ZONE_LABELS = {
@@ -64,7 +64,6 @@ export const NODE_ZONE_MAP = {
 
 /* ══════════════════════════════════════════════════════
    3. WAHANA INDOOR & POPULER
-   Sumber: agent.js baris 240, 251
 ══════════════════════════════════════════════════════ */
 
 /**
@@ -89,7 +88,7 @@ export const POPULAR_QUEUE_IDS = new Set([
 
 /* ══════════════════════════════════════════════════════
    4. FLOYD-WARSHALL
-   Skala: agent.js baris 223 → walkTime = walkDist / 100
+   Skala: walkTime = walkDist / 100
    walkDist = jarak Euclidean dalam unit canvas (MAP_W=1280, MAP_H=640)
 ══════════════════════════════════════════════════════ */
 
@@ -210,7 +209,6 @@ export function calcPWT(opts) {
 
 /* ══════════════════════════════════════════════════════
    7. FILTER KELAYAKAN
-   Sumber: agent.js baris 203-235
 ══════════════════════════════════════════════════════ */
 
 export function parseTime(s) {
@@ -255,7 +253,6 @@ export function isEligible(opts) {
 
 /* ══════════════════════════════════════════════════════
    8. HYBRID HIERARCHICAL ROUTING — FUNGSI UTAMA
-   Sumber: agent.js → nextDestination() baris 178-315
 ══════════════════════════════════════════════════════ */
 
 /**
@@ -301,8 +298,8 @@ export function recommendNextRide(opts) {
   // agent.js baris 196: SOLO + Priority → Global Search
   const isGlobalSearch = (visitorType === 'SOLO' || isPriority);
   const maxLoop        = isGlobalSearch ? 1 : 4;
-  const pwtThreshold   = w.limit + 10;                 // agent.js baris 183
-  const maxTolerance   = isPriority ? 90 : 75;         // agent.js baris 271
+  const pwtThreshold   = w.limit + 10;                 
+  const maxTolerance   = isPriority ? 90 : 75;         
 
   const curNodeName   = nodes[currentNode]?.name || '';
   const curNodeIndoor = INDOOR_NODE_NAMES.has(curNodeName);
@@ -321,7 +318,7 @@ export function recommendNextRide(opts) {
     if (!node) return null;
 
     const walkDist = dist[currentNode]?.[nodeIdx] ?? 1e9;
-    const walkTime = walkDist / 100;   // agent.js baris 223
+    const walkTime = walkDist / 100; 
 
     const q        = getQ(node);
     const runtime  = parseDurasi(node.durasi);
@@ -365,12 +362,10 @@ export function recommendNextRide(opts) {
 
       const { waitTime, indoorBonus } = score.breakdown;
 
-      // Fallback list (agent.js baris 274-276)
       if (waitTime <= maxTolerance || indoorBonus < 0) {
         fallbackRides.push(score);
       }
 
-      // Kandidat utama (agent.js baris 280-282)
       if (score.pwt <= pwtThreshold && waitTime <= w.limit + 15) {
         validCandidates.push(score);
       }
@@ -386,14 +381,13 @@ export function recommendNextRide(opts) {
         nextZone: activeZone,
       };
     } else {
-      if (!isGlobalSearch) activeZone = (activeZone % 4) + 1; // agent.js baris 293
+      if (!isGlobalSearch) activeZone = (activeZone % 4) + 1; 
       zonesChecked++;
     }
   }
 
   if (targetFound) return targetFound;
 
-  // Fallback global (agent.js baris 300-308)
   if (fallbackRides.length > 0) {
     fallbackRides.sort((a, b) => a.pwt - b.pwt);
     return { ...fallbackRides[0], reason: 'fallback', nextZone: activeZone };

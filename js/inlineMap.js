@@ -24,9 +24,8 @@ window.switchTab = function(tab) {
 
 function getFilteredTickets() {
   switch (currentTab) {
-    case 'valid':     return tickets.filter(t => (t.status||'VALID').toUpperCase() === 'VALID');
-    case 'used':      return tickets.filter(t => (t.status||'').toUpperCase() === 'USED');
-    case 'expired':   return tickets.filter(t => (t.status||'').toUpperCase() === 'EXPIRED');
+    case 'valid':     return tickets.filter(t => getEffectiveStatus(t) === 'VALID');
+    case 'expired':   return tickets.filter(t => getEffectiveStatus(t) === 'EXPIRED');
     case 'fasttrack': return tickets.filter(t => t.fastTrack);
     default:          return tickets;
   }
@@ -35,9 +34,8 @@ function getFilteredTickets() {
 function updateTabCounts() {
   const counts = {
     semua:     tickets.length,
-    valid:     tickets.filter(t => (t.status||'VALID').toUpperCase() === 'VALID').length,
-    used:      tickets.filter(t => (t.status||'').toUpperCase() === 'USED').length,
-    expired:   tickets.filter(t => (t.status||'').toUpperCase() === 'EXPIRED').length,
+    valid:     tickets.filter(t => getEffectiveStatus(t) === 'VALID').length,
+    expired:   tickets.filter(t => getEffectiveStatus(t) === 'EXPIRED').length,
     fasttrack: tickets.filter(t => t.fastTrack).length,
   };
   Object.entries(counts).forEach(([k, v]) => {
@@ -63,16 +61,48 @@ let me=null,profile=null,tickets=[],selPkg=null,adultN=2,childN=1;
 
 /* ── PACKAGES ── */
 const PKGS={
-  SOLO:          {name:'Solo',          priority:false,price:250000,minA:1,maxA:1, kids:false},
-  SOLO_PRIORITY: {name:'Solo Priority', priority:true, price:750000,minA:1,maxA:1, kids:false},
-  GROUP:         {name:'Group',         priority:false,price:220000,minA:2,maxA:10,kids:false},
-  GROUP_PRIORITY:{name:'Group Priority',priority:true, price:600000,minA:2,maxA:10,kids:false},
-  GROUP_FAMILY:  {name:'Family',        priority:false,price:200000,minA:1,maxA:4, kids:true},
+  SOLO:          {name:'Solo',          priority:false,price:350000,minA:1,maxA:1, kids:false},
+  SOLO_PRIORITY: {name:'Solo Priority', priority:true, price:500000,minA:1,maxA:1, kids:false},
+  GROUP:         {name:'Group',         priority:false,price:300000,minA:2,maxA:10,kids:false},
+  GROUP_PRIORITY:{name:'Group Priority',priority:true, price:400000,minA:2,maxA:10,kids:false},
+  GROUP_FAMILY:  {name:'Family',        priority:false,price:280000,minA:1,maxA:4, kids:true},
 };
 const PKG_CLR={
   SOLO:'#bbe70e',SOLO_PRIORITY:'#fbbf24',
   GROUP:'#ec4899',GROUP_PRIORITY:'#f97316',GROUP_FAMILY:'#38bdf8',
 };
+
+/* ── TICKET STATUS HELPERS ── */
+
+// Kembalikan tanggal hari ini dalam format YYYY-MM-DD (lokal)
+function todayStr(){
+  const d=new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+// Status efektif tiket: EXPIRED jika tanggal sudah lewat, selainnya pakai status di DB
+// Tiket yang sudah di-scan petugas (ada usageLog) tetap VALID selama masih hari kunjungan
+function getEffectiveStatus(t){
+  const today=todayStr();
+  if(!t.date||t.date<today) return 'EXPIRED';
+  // Jika status di DB adalah EXPIRED (set manual/lama), ikuti
+  if((t.status||'').toUpperCase()==='EXPIRED') return 'EXPIRED';
+  // Selama tanggal kunjungan == hari ini atau di masa depan → VALID (bisa dipakai berkali-kali)
+  return 'VALID';
+}
+
+// Auto-expire: tiket yang tanggalnya sudah lewat tapi statusnya masih VALID/USED di DB → update ke EXPIRED
+async function autoExpireTickets(){
+  const today=todayStr();
+  const toExpire=tickets.filter(t=>
+    t.date && t.date<today &&
+    (t.status||'VALID').toUpperCase()!=='EXPIRED'
+  );
+  if(!toExpire.length) return;
+  await Promise.all(
+    toExpire.map(t=>set(ref(db,`tickets/${t.id}/status`),'EXPIRED'))
+  );
+}
 
 /* ── LOADING ── */
 function hideLoading(){
@@ -111,6 +141,7 @@ function listenTickets(uid){
     const res=await Promise.all(ids.map(id=>get(ref(db,`tickets/${id}`))));
     tickets=res.filter(s=>s.exists()).map(s=>s.val());
     window._tickets = tickets;
+    await autoExpireTickets();  // update EXPIRED di Firebase jika perlu
     renderTickets();
     updateStats();
     updateTicketOptions(tickets);
@@ -152,18 +183,32 @@ function tcHTML(t){
   const date=t.date
     ?new Date(t.date+'T00:00:00').toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'})
     :'—';
-  const st=(t.status||'VALID').toLowerCase();
-  const stClass=st==='used'?' tc-used':st==='expired'?' tc-expired':'';
-  const usedAt=t.usedAt
-    ?new Date(t.usedAt).toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})
-    :null;
+  const effStatus=getEffectiveStatus(t);
+  const st=effStatus.toLowerCase();
+  const stClass=st==='expired'?' tc-expired':'';
+
+  // Bangun histori pemakaian dari usageLog
+  const logs=t.usageLog?Object.values(t.usageLog):[];
+  logs.sort((a,b)=>new Date(a.timestamp)-new Date(b.timestamp));
+  const usageHTML=logs.length?`
+    <div class="tc-meta" style="grid-column:1/-1">
+      <div class="lbl">🎢 RIWAYAT PEMAKAIAN (${logs.length}x)</div>
+      <div class="usage-log">
+        ${logs.map(l=>{
+          const ts=new Date(l.timestamp).toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
+          return `<div class="usage-entry"><span class="usage-time">${ts}</span><span class="usage-ride">${l.rideName||l.rideId||'—'}</span></div>`;
+        }).join('')}
+      </div>
+    </div>`:'';
+
   return `
   <div class="tc${t.fastTrack?' is-ft':''}${stClass}" style="--tc-clr:${clr}">
     <div class="tc-head">
       <div class="tc-id">${t.id}</div>
       <div class="tc-badges">
         ${t.fastTrack?'<span class="badge badge-ft">⚡ FT</span>':''}
-        <span class="badge badge-${st}">${(t.status||'VALID')}</span>
+        <span class="badge badge-${st}">${effStatus}</span>
+        ${logs.length&&st==='valid'?`<span class="badge badge-used-count">🎢 ${logs.length}x</span>`:''}
       </div>
     </div>
     <div class="tc-body">
@@ -178,25 +223,24 @@ function tcHTML(t){
           <div class="lbl">ANGGOTA</div>
           <div class="val">${t.numAdults||1} dewasa${t.numChildren?' + '+t.numChildren+' anak':''}</div>
         </div>
-        ${usedAt?`
-        <div class="tc-meta" style="grid-column:1/-1">
-          <div class="lbl">DIGUNAKAN PADA</div>
-          <div class="val" style="color:var(--muted)">📌 ${usedAt}</div>
-        </div>`:''}
+        ${usageHTML}
       </div>
     </div>
     <div class="tc-foot">
       <div class="pkg-pill"><div class="pkg-dot"></div>&nbsp;${pkg.name||t.paket||'—'}</div>
-      ${st==='valid'?`<button class="btn-sm" onclick="showQR('${t.id}')">QR CODE</button>`:`<span style="font-family:'Space Mono',monospace;font-size:9px;color:var(--muted)">${st==='used'?'SUDAH DIPAKAI':'KADALUARSA'}</span>`}
+      ${st==='valid'
+        ?`<button class="btn-sm" onclick="showQR('${t.id}')">QR CODE</button>`
+        :`<span style="font-family:'Space Mono',monospace;font-size:9px;color:var(--muted)">KADALUARSA</span>`
+      }
     </div>
   </div>`;
 }
 
 function updateStats(){
   document.getElementById('s-total').textContent=tickets.length;
-  document.getElementById('s-valid').textContent=tickets.filter(t=>(t.status||'VALID').toUpperCase()==='VALID').length;
+  document.getElementById('s-valid').textContent=tickets.filter(t=>getEffectiveStatus(t)==='VALID').length;
   document.getElementById('s-ft').textContent=tickets.filter(t=>t.fastTrack).length;
-  document.getElementById('s-used').textContent=tickets.filter(t=>(t.status||'').toUpperCase()==='USED').length;
+  document.getElementById('s-used').textContent=tickets.filter(t=>getEffectiveStatus(t)==='EXPIRED').length;
   updateTabCounts();
 }
 
@@ -301,12 +345,14 @@ window.confirmBuy=async function(){
 /* ── QR ── */
 window.showQR=function(id){
   const t=tickets.find(x=>x.id===id);if(!t)return;
+  if(getEffectiveStatus(t)!=='VALID'){toast('error','⚠️','Tiket ini sudah tidak berlaku');return;}
   const pkg=PKGS[t.paket]||{};
   const date=t.date
     ?new Date(t.date+'T00:00:00').toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'})
     :'—';
+  const logs=t.usageLog?Object.values(t.usageLog):[];
   document.getElementById('qr-title').textContent=t.id;
-  document.getElementById('qr-sub').textContent=(pkg.name||t.paket||'—')+' · '+(t.status||'VALID');
+  document.getElementById('qr-sub').textContent=(pkg.name||t.paket||'—')+' · VALID';
   document.getElementById('qr-id').textContent=t.id;
   const box=document.getElementById('qr-box');
   box.innerHTML='';
@@ -319,7 +365,8 @@ window.showQR=function(id){
     <div class="qr-deet"><span class="k">📅 Tanggal</span><span class="v">${date}</span></div>
     <div class="qr-deet"><span class="k">👥 Anggota</span><span class="v">${t.numAdults||1} dewasa${t.numChildren?' + '+t.numChildren+' anak':''}</span></div>
     <div class="qr-deet"><span class="k">🎟️ Jenis</span><span class="v">${t.fastTrack?'⚡ Fast Track':'Reguler'}</span></div>
-    <div class="qr-deet"><span class="k">📊 Status</span><span class="v">${t.status||'VALID'}</span></div>
+    <div class="qr-deet"><span class="k">🎢 Pemakaian</span><span class="v">${logs.length}x hari ini</span></div>
+    <div class="qr-deet"><span class="k">📊 Status</span><span class="v" style="color:#4ade80">✅ VALID</span></div>
   `;
   document.getElementById('qr-modal').classList.add('show');
 };
