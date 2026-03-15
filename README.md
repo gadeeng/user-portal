@@ -161,4 +161,4 @@ Project ini adalah static web — tidak perlu build step.
 
 ## 👥 Tim
 
-**Tim Sayang Lomba Sayangg** — © 2026 DUFAN · Taman Impian Jaya Ancol
+**Tim Sayang Lomba Sayangg** — © 2026
